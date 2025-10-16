@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 Part 2: DHCP & DNS Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="progress-bar.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #000;
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            margin: 30px 0;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .question-container {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .question-number {
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .progress {
+            text-align: center;
+            color: #00ffff;
+            margin: 20px 0;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Streak Counter Styles */
+        .streak-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .streak-text {
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .streak-number {
+            color: #ff00ff;
+            font-weight: bold;
+            font-size: 1.5em;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+        }
+
+        /* Celebration Styles */
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+
+        .celebration-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            opacity: 0;
+            animation: fadeInOut 4s ease-in-out;
+        }
+
+        .celebration-title {
+            font-size: 0.5em;
+            color: #ff00ff;
+            margin-top: 10px;
+            text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 IPv4 Part 2: DHCP & DNS Quiz</h1>
+        <div class="progress">Question <span id="current-question">1</span> of <span id="total-questions">30</span></div>
+        <div class="streak-container" id="streakContainer">
+            <div class="streak-text">Current Streak: <span class="streak-number" id="streakNumber">0</span></div>
+        </div>
+
+        <div class="question-container">
+            <div class="question-number">Question <span id="question-number">1</span></div>
+            <div class="question-text" id="question-text"></div>
+            <ul class="options" id="options"></ul>
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="next-btn" style="display: none;">Next Question</button>
+            <button class="nav-btn" id="finish-btn" style="display: none;">Finish Quiz</button>
+            <button class="nav-btn" id="next-topic-btn" style="display: none;">Next Topic</button>
+        </div>
+    </div>
+
+    <div class="celebration-container" id="celebrationContainer">
+        <div class="celebration-message">
+            <div class="celebration-title">Quiz Complete!</div>
+        </div>
+    </div>
+
+    <script src="ipv4-part2-questions.js"></script>
+    <script src="celebration.js"></script>
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            const questionText = document.getElementById('question-text');
+            const options = document.getElementById('options');
+            const questionNumber = document.getElementById('question-number');
+            const currentQuestionSpan = document.getElementById('current-question');
+            const totalQuestionsSpan = document.getElementById('total-questions');
+            const nextBtn = document.getElementById('next-btn');
+            const finishBtn = document.getElementById('finish-btn');
+            const nextTopicBtn = document.getElementById('next-topic-btn');
+            
+            questionNumber.textContent = currentQuestion + 1;
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            totalQuestionsSpan.textContent = questions.length;
+            
+            questionText.textContent = question.question;
+            
+            options.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.className = 'option';
+                li.textContent = option;
+                li.onclick = () => handleAnswer(index);
+                options.appendChild(li);
+            });
+            
+            // Hide all navigation buttons
+            nextBtn.style.display = 'none';
+            finishBtn.style.display = 'none';
+            nextTopicBtn.style.display = 'none';
+            
+            // Show streak if it exists
+            const streakContainer = document.getElementById('streakContainer');
+            const streakNumber = document.getElementById('streakNumber');
+            if (streak > 0) {
+                streakContainer.style.display = 'block';
+                streakNumber.textContent = streak;
+            } else {
+                streakContainer.style.display = 'none';
+            }
+        }
+
+        function handleAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = document.getElementById('options').getElementsByClassName('option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const finishBtn = document.getElementById('finish-btn');
+            const nextTopicBtn = document.getElementById('next-topic-btn');
+            
+            // Disable all options
+            Array.from(options).forEach(option => {
+                option.classList.add('disabled');
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedIndex === question.correctAnswer;
+            
+            // Update score if correct
+            if (isCorrect) {
+                score++;
+            }
+            
+            // Update streak
+            if (isCorrect) {
+                streak++;
+                if (streak % 5 === 0) {
+                    showCelebration(streak);
+                }
+            } else {
+                streak = 0;
+            }
+            
+            // Update streak display
+            const streakContainer = document.getElementById('streakContainer');
+            const streakNumber = document.getElementById('streakNumber');
+            streakNumber.textContent = streak;
+            streakContainer.style.display = 'block';
+            
+            // Show feedback
+            feedback.style.display = 'block';
+            if (isCorrect) {
+                options[selectedIndex].classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `
+                    <div>Correct!</div>
+                    <div class="explanation">${question.explanation}</div>
+                `;
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.correctAnswer].classList.add('correct');
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `
+                    <div>Incorrect</div>
+                    <div class="explanation">${question.explanation}</div>
+                `;
+            }
+            
+            // Show appropriate navigation button
+            if (currentQuestion < questions.length - 1) {
+                // Not the last question - show Next Question button
+                nextBtn.style.display = 'block';
+            } else {
+                // Last question - show Next Topic button
+                nextTopicBtn.style.display = 'block';
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
+        }
+
+        function nextTopic() {
+            // Redirect to the next module
+            window.location.href = 'ipv4-part3.html';
+        }
+
+        function showCelebration(streak) {
+            const celebrationContainer = document.getElementById('celebrationContainer');
+            const celebrationMessage = celebrationContainer.querySelector('.celebration-message');
+            const celebrationTitle = celebrationContainer.querySelector('.celebration-title');
+            
+            celebrationTitle.textContent = `Streak ${streak}!`;
+            celebrationContainer.style.display = 'block';
+            
+            // Create fireworks
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = Math.random() * window.innerWidth + 'px';
+                    firework.style.top = Math.random() * window.innerHeight + 'px';
+                    firework.style.backgroundColor = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'][Math.floor(Math.random() * 6)];
+                    celebrationContainer.appendChild(firework);
+                    
+                    setTimeout(() => {
+                        firework.remove();
+                    }, 1000);
+                }, i * 100);
+            }
+            
+            // Hide after 4 seconds
+            setTimeout(() => {
+                celebrationContainer.style.display = 'none';
+            }, 4000);
+        }
+
+        // Add event listeners
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('next-topic-btn').addEventListener('click', nextTopic);
+
+        // Initialize the quiz
+        window.addEventListener('load', showQuestion);
+    </script>
+</body>
+</html> 

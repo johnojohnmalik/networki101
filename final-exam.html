@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Exam - Stage 10</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="progress-bar.css">
+  <style>
+    .quiz-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .question {
+      background-color: var(--light-bg);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .option {
+      background-color: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 204, 255, 0.2);
+    }
+
+    .option:hover {
+      background-color: rgba(0, 204, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    .option.selected {
+      background-color: rgba(0, 204, 255, 0.2);
+      border-color: rgba(0, 204, 255, 0.5);
+    }
+
+    .option.correct {
+      background-color: rgba(0, 255, 102, 0.2);
+      border-color: rgba(0, 255, 102, 0.5);
+    }
+
+    .option.incorrect {
+      background-color: rgba(255, 51, 102, 0.2);
+      border-color: rgba(255, 51, 102, 0.5);
+    }
+
+    .feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .feedback.correct {
+      background-color: rgba(0, 255, 102, 0.15);
+      border: 1px solid var(--correct-color);
+      color: var(--correct-color);
+    }
+
+    .feedback.incorrect {
+      background-color: rgba(255, 51, 102, 0.15);
+      border: 1px solid var(--wrong-color);
+      color: var(--wrong-color);
+    }
+
+    .progress {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .question-counter {
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Orbitron', sans-serif;
+      color: #00ccff;
+      font-size: 1.2em;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    .nav-btn:hover {
+      background-color: #357abd;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .results-container {
+      background: linear-gradient(135deg, rgba(0, 204, 255, 0.1), rgba(0, 255, 102, 0.1));
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      margin-top: 30px;
+      border: 2px solid;
+    }
+
+    .results-container.pass {
+      border-color: rgba(0, 255, 102, 0.5);
+    }
+
+    .results-container.fail {
+      border-color: rgba(255, 51, 102, 0.5);
+    }
+
+    .results-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+    }
+
+    .results-title.pass {
+      color: #00ff66;
+    }
+
+    .results-title.fail {
+      color: #ff3366;
+    }
+
+    .score-display {
+      font-size: 3em;
+      font-family: 'Orbitron', sans-serif;
+      margin: 20px 0;
+    }
+
+    .percentage-display {
+      font-size: 2em;
+      font-family: 'Orbitron', sans-serif;
+      margin: 20px 0;
+      color: #00ccff;
+    }
+
+    .results-message {
+      font-size: 1.3em;
+      margin: 20px 0;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .retake-btn {
+      background-color: #ff9500;
+    }
+
+    .retake-btn:hover {
+      background-color: #cc7700;
+      box-shadow: 0 0 15px rgba(255, 149, 0, 0.5);
+    }
+
+    .home-btn {
+      background-color: #00ccff;
+    }
+
+    .home-btn:hover {
+      background-color: #0099cc;
+      box-shadow: 0 0 15px rgba(0, 204, 255, 0.5);
+    }
+
+    .exam-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(0, 204, 255, 0.1), rgba(138, 43, 226, 0.1));
+      border-radius: 10px;
+    }
+
+    .exam-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #00ccff;
+      text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .exam-instructions {
+      color: #aaa;
+      font-size: 0.9em;
+      line-height: 1.6;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 30px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid rgba(0, 204, 255, 0.3);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4a90e2, #00ccff);
+      transition: width 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    .stage-indicator {
+      display: inline-block;
+      background: linear-gradient(135deg, #8a2be2, #4a90e2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      color: white;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="exam-header">
+      <div class="stage-indicator">🏆 STAGE 10 - FINAL EXAM</div>
+      <h1>Comprehensive Network Fundamentals Exam</h1>
+      <div class="exam-instructions">
+        <p>Test your knowledge across all 9 stages! You need 70% or higher to pass.</p>
+        <p>40 questions • Mixed topics • No time limit</p>
+      </div>
+    </div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-fill" style="width: 0%;">0%</div>
+    </div>
+
+    <div class="question-counter">Question <span id="current-question">1</span> of <span id="total-questions">40</span></div>
+    
+    <div id="quiz">
+      <!-- Quiz content will be injected here -->
+    </div>
+    
+    <div id="results" style="display: none;">
+      <!-- Results will be shown here -->
+    </div>
+    
+    <button id="next-btn" class="nav-btn" disabled>Next Question</button>
+  </div>
+
+  <script src="final-exam-questions.js"></script>
+  <script src="progress-bar.js"></script>
+  <script src="js/home-button.js"></script>
+  <script>
+    let currentQuestionIndex = 0;
+    let userAnswers = new Array(finalExamQuestions.length).fill(null);
+    let correctAnswers = 0;
+
+    function updateProgressBar() {
+      const progress = ((currentQuestionIndex + 1) / finalExamQuestions.length) * 100;
+      const progressFill = document.getElementById('progress-fill');
+      progressFill.style.width = progress + '%';
+      progressFill.textContent = Math.round(progress) + '%';
+    }
+
+    function displayQuestion(index) {
+      const question = finalExamQuestions[index];
+      const container = document.getElementById('quiz');
+      
+      document.getElementById('current-question').textContent = index + 1;
+      document.getElementById('total-questions').textContent = finalExamQuestions.length;
+      updateProgressBar();
+
+      let html = `
+        <div class="question">
+          <p><strong>Question ${index + 1}:</strong> ${question.question}</p>
+          <div class="options">
+      `;
+
+      question.options.forEach((option, i) => {
+        const isSelected = userAnswers[index] === i;
+        const isCorrect = isSelected && i === question.correctAnswer;
+        const isIncorrect = isSelected && i !== question.correctAnswer;
+        
+        html += `
+          <div class="option ${isSelected ? 'selected' : ''} ${isCorrect ? 'correct' : ''} ${isIncorrect ? 'incorrect' : ''}"
+               onclick="selectAnswer(${index}, ${i})">
+            ${option}
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+          <div id="feedback-${index}" class="feedback"></div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+
+      const nextBtn = document.getElementById('next-btn');
+      nextBtn.disabled = userAnswers[index] === null;
+      
+      if (index === finalExamQuestions.length - 1 && userAnswers[index] !== null) {
+        nextBtn.textContent = 'View Results';
+      } else {
+        nextBtn.textContent = 'Next Question';
+      }
+    }
+
+    function selectAnswer(questionIndex, optionIndex) {
+      if (userAnswers[questionIndex] !== null) return;
+
+      userAnswers[questionIndex] = optionIndex;
+      const question = finalExamQuestions[questionIndex];
+      const feedback = document.getElementById(`feedback-${questionIndex}`);
+
+      // Update correct answer count
+      if (optionIndex === question.correctAnswer) {
+        feedback.textContent = '✅ Correct!';
+        feedback.className = 'feedback correct';
+        correctAnswers++;
+      } else {
+        feedback.textContent = '❌ Incorrect. The correct answer is: ' + question.options[question.correctAnswer];
+        feedback.className = 'feedback incorrect';
+      }
+
+      feedback.style.display = 'block';
+      
+      // Enable next button
+      const nextBtn = document.getElementById('next-btn');
+      nextBtn.disabled = false;
+      
+      // Update button text if this is the last question
+      if (questionIndex === finalExamQuestions.length - 1) {
+        nextBtn.textContent = 'View Results';
+      }
+      
+      // Re-render the question to show visual feedback
+      displayQuestion(questionIndex);
+    }
+
+    function showNextQuestion() {
+      if (currentQuestionIndex < finalExamQuestions.length - 1) {
+        currentQuestionIndex++;
+        displayQuestion(currentQuestionIndex);
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const totalQuestions = finalExamQuestions.length;
+      const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+      const passed = percentage >= 70;
+
+      // Hide quiz content
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+      document.querySelector('.question-counter').style.display = 'none';
+      document.querySelector('.progress-bar-container').style.display = 'none';
+
+      // Show results
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.style.display = 'block';
+
+      let message = '';
+      if (percentage >= 90) {
+        message = '🌟 Outstanding! You have mastered network fundamentals!';
+      } else if (percentage >= 80) {
+        message = '🎉 Excellent work! You have a strong understanding of networking!';
+      } else if (percentage >= 70) {
+        message = '✅ Good job! You passed the exam!';
+      } else if (percentage >= 60) {
+        message = '📚 Almost there! Review the material and try again.';
+      } else {
+        message = '💪 Keep studying! Review all stages and retake the exam.';
+      }
+
+      resultsContainer.innerHTML = `
+        <div class="results-container ${passed ? 'pass' : 'fail'}">
+          <div class="results-title ${passed ? 'pass' : 'fail'}">
+            ${passed ? '🎉 CONGRATULATIONS! 🎉' : '📚 NOT QUITE YET'}
+          </div>
+          <div class="score-display">
+            ${correctAnswers} / ${totalQuestions}
+          </div>
+          <div class="percentage-display">
+            ${percentage}%
+          </div>
+          <div class="results-message">
+            ${message}
+          </div>
+          <div class="results-message">
+            ${passed ? 
+              '✅ <strong>PASSED</strong> - You need 70% to pass' : 
+              '❌ <strong>FAILED</strong> - You need 70% to pass (You got ' + percentage + '%)'
+            }
+          </div>
+          <div class="action-buttons">
+            <button class="nav-btn retake-btn" onclick="retakeExam()">
+              🔄 Retake Exam
+            </button>
+            <button class="nav-btn home-btn" onclick="window.location.href='index.html'">
+              🏠 Back to Home
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Trigger quiz completion event for badges
+      window.dispatchEvent(new Event('quizComplete'));
+    }
+
+    function retakeExam() {
+      // Reset all variables
+      currentQuestionIndex = 0;
+      userAnswers = new Array(finalExamQuestions.length).fill(null);
+      correctAnswers = 0;
+
+      // Regenerate questions
+      const newQuestions = getRandomQuestions(40);
+      finalExamQuestions.length = 0;
+      finalExamQuestions.push(...newQuestions);
+
+      // Show quiz elements again
+      document.getElementById('quiz').style.display = 'block';
+      document.getElementById('next-btn').style.display = 'block';
+      document.querySelector('.question-counter').style.display = 'block';
+      document.querySelector('.progress-bar-container').style.display = 'block';
+      document.getElementById('results').style.display = 'none';
+
+      // Reload the page for a fresh start
+      window.location.reload();
+    }
+
+    // Event listener for next button
+    document.getElementById('next-btn').addEventListener('click', showNextQuestion);
+
+    // Initialize the exam
+    displayQuestion(0);
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 Part 3: Practice Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="progress-bar.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .question-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary-color);
+            overflow-x: auto;
+            word-wrap: break-word;
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            word-wrap: break-word;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .option {
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .option:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateX(10px);
+        }
+
+        .option.selected {
+            background: rgba(0, 255, 255, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .answer {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            display: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-color);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .next-button {
+            padding: 15px 30px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .next-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .binary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: monospace;
+            table-layout: fixed;
+        }
+
+        .binary-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .binary-table .header {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .binary-table .value {
+            color: var(--accent-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.1);
+            margin-bottom: 20px;
+            border-radius: 2px;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .question-number {
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .streak-display {
+            color: var(--accent-color);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            display: none;
+        }
+
+        .streak-display.active {
+            display: block;
+            animation: streakPulse 2s ease-in-out infinite;
+        }
+
+        .streak-display.milestone-close {
+            animation: milestonePulse 1s ease-in-out infinite;
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        @keyframes streakPulse {
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); 
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); 
+            }
+        }
+
+        @keyframes milestonePulse {
+            0%, 100% { 
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); 
+                transform: scale(1.05);
+            }
+        }
+
+        .result-container {
+            text-align: center;
+            display: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            padding: 20px;
+        }
+
+        .result-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 2em;
+            color: var(--accent-color);
+            margin: 20px 0;
+        }
+
+        .restart-button {
+            padding: 15px 30px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .next-topic-button {
+            padding: 15px 30px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid var(--accent-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .next-topic-button:hover {
+            background: rgba(255, 0, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+        }
+
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #F44336;
+        }
+
+        .option.correct.selected {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .option.incorrect.selected {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .celebration-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 60px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+            text-align: center;
+            opacity: 0;
+            z-index: 1001;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .celebration-message h2 {
+            color: var(--primary-color);
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 0 0 20px var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        .celebration-message p {
+            color: var(--accent-color);
+            font-size: 1.8em;
+            margin: 15px 0 0;
+            text-shadow: 0 0 15px var(--accent-color);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+        }
+
+        .cyber-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes fadeInOut {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8); 
+            }
+            20% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.1); 
+            }
+            80% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8); 
+            }
+        }
+
+        @keyframes particleAnimation {
+            0% { 
+                transform: translate(0, 0) rotate(0deg); 
+                opacity: 1; 
+                width: 4px;
+                height: 4px;
+            }
+            50% {
+                opacity: 1;
+                width: 6px;
+                height: 6px;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) rotate(360deg); 
+                opacity: 0; 
+                width: 2px;
+                height: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="celebration-container" id="celebrationContainer"></div>
+    <div class="quiz-container">
+        <div class="progress-bar">
+            <div class="progress" style="width: 0%"></div>
+        </div>
+        <div class="question-number">Question 1 of <span id="total-questions">30</span></div>
+        <div class="streak-display">Current Streak: <span id="current-streak">0</span></div>
+        <div class="question-container">
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div class="answer" id="answer">
+                <div class="answer-text"></div>
+                <div class="explanation"></div>
+            </div>
+            <button class="next-button" id="next-btn" style="display: none;">Next Question</button>
+        </div>
+        <div class="result-container" id="result-container">
+            <h2>Quiz Complete!</h2>
+            <div class="score">Your Score: <span id="final-score">0</span>/<span id="final-total">30</span></div>
+            <div class="button-container">
+                <button class="restart-button" id="restart-btn">Restart Quiz</button>
+                <button class="next-topic-button" id="next-topic-btn" style="display: none;">Next Topic</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="ipv4-part3-practice-questions.js"></script>
+    
+    <!-- Standalone Practice Quiz Script -->
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let quizCompleted = false;
+
+        // Get DOM elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const answerDiv = document.getElementById('answer');
+        const nextBtn = document.getElementById('next-btn');
+        const resultContainer = document.getElementById('result-container');
+        const progressBar = document.querySelector('.progress');
+        const questionNumber = document.querySelector('.question-number');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const finalScoreSpan = document.getElementById('final-score');
+        const finalTotalSpan = document.getElementById('final-total');
+        const restartBtn = document.getElementById('restart-btn');
+        const nextTopicBtn = document.getElementById('next-topic-btn');
+        const streakDisplay = document.querySelector('.streak-display');
+        const currentStreakSpan = document.getElementById('current-streak');
+
+        // Initialize quiz
+        function initializeQuiz() {
+            console.log('Initializing practice quiz...');
+            totalQuestionsSpan.textContent = questions.length;
+            finalTotalSpan.textContent = questions.length;
+            updateStreakDisplay();
+            showQuestion();
+        }
+
+        // Update streak display
+        function updateStreakDisplay() {
+            currentStreakSpan.textContent = streak;
+            if (streak > 0) {
+                streakDisplay.classList.add('active');
+                
+                // Check if close to milestone (within 1-2 answers of multiple of 5)
+                const nextMilestone = Math.ceil(streak / 5) * 5;
+                const distanceToMilestone = nextMilestone - streak;
+                
+                if (distanceToMilestone <= 2 && distanceToMilestone > 0) {
+                    streakDisplay.classList.add('milestone-close');
+                } else {
+                    streakDisplay.classList.remove('milestone-close');
+                }
+            } else {
+                streakDisplay.classList.remove('active');
+                streakDisplay.classList.remove('milestone-close');
+            }
+        }
+
+        // Show current question
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestion];
+            
+            // Update question number
+            questionNumber.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            
+            // Update progress bar
+            const progress = ((currentQuestion) / questions.length) * 100;
+            progressBar.style.width = progress + '%';
+            
+            // Set question text
+            questionText.textContent = question.question;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Add options
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = `${String.fromCharCode(65 + index)}) ${option}`;
+                optionDiv.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Hide answer and next button
+            answerDiv.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+
+        // Handle option selection
+        function selectOption(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = optionsContainer.getElementsByClassName('option');
+            
+            // Disable all options
+            Array.from(options).forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Check if answer is correct
+            const isCorrect = selectedIndex === question.correctAnswer;
+            
+            if (isCorrect) {
+                score++;
+                streak++;
+                
+                // Check if streak is a multiple of 5
+                if (streak % 5 === 0) {
+                    triggerCelebration(streak);
+                }
+                
+                options[selectedIndex].classList.add('correct');
+            } else {
+                streak = 0; // Reset streak on incorrect answer
+                options[selectedIndex].classList.add('incorrect');
+                options[question.correctAnswer].classList.add('correct');
+            }
+            
+            // Update streak display
+            updateStreakDisplay();
+            
+            // Show answer explanation
+            answerDiv.style.display = 'block';
+            answerDiv.innerHTML = `
+                <div class="answer-text">${isCorrect ? 'Correct!' : 'Incorrect!'}</div>
+                <div class="explanation">${question.explanation}</div>
+            `;
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Show next question
+        function nextQuestion() {
+            currentQuestion++;
+            showQuestion();
+        }
+
+        // Show results
+        function showResults() {
+            quizCompleted = true;
+            finalScoreSpan.textContent = score;
+            
+            // Hide question container
+            document.querySelector('.question-container').style.display = 'none';
+            
+            // Show results
+            resultContainer.style.display = 'block';
+            
+            // Show next topic button
+            nextTopicBtn.style.display = 'inline-block';
+            
+            // Update progress bar to 100%
+            progressBar.style.width = '100%';
+            
+            console.log(`Quiz completed! Score: ${score}/${questions.length}`);
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            quizCompleted = false;
+            
+            // Reset display
+            document.querySelector('.question-container').style.display = 'block';
+            resultContainer.style.display = 'none';
+            
+            // Hide next topic button
+            nextTopicBtn.style.display = 'none';
+            
+            // Reset streak display
+            updateStreakDisplay();
+            
+            // Reinitialize
+            initializeQuiz();
+        }
+
+        // Navigate to next topic
+        function goToNextTopic() {
+            // Add a smooth transition effect
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease-out';
+            
+            setTimeout(() => {
+                window.location.href = 'ipv4-part4-module.html';
+            }, 500);
+        }
+
+        // Add event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+        nextTopicBtn.addEventListener('click', goToNextTopic);
+
+        // Start the quiz when page loads
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+        
+        // Also start immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeQuiz);
+        } else {
+            initializeQuiz();
+        }
+    </script>
+    <script src="script.js"></script>
+    <script src="celebration.js"></script>
+    <script src="js/navigation.js"></script>
+</body>
+</html> 

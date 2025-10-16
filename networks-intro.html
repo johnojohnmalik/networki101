@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction to Computer Networks</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="progress-bar.css">
+  <style>
+    .intro-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .intro-container h1 {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+      color: #00ff00;
+      text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+
+    .intro-container h2 {
+      font-size: 1.8em;
+      margin: 1.5em 0 0.8em;
+      color: #00ffff;
+    }
+
+    .intro-container p {
+      margin-bottom: 1em;
+      font-size: 1.1em;
+    }
+
+    .story-section {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 10px;
+      border: 1px solid #00ff00;
+    }
+
+    .story-section h3 {
+      color: #ff0000;
+      margin-bottom: 15px;
+    }
+
+    .story-section ul {
+      list-style-type: none;
+      padding-left: 20px;
+    }
+
+    .story-section li {
+      margin: 10px 0;
+    }
+
+    .story-section a {
+      color: #00ffff;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .story-section a:hover {
+      text-decoration: underline;
+    }
+
+    .special-thanks {
+      margin-top: 40px;
+      padding: 20px;
+      background: rgba(0, 255, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    .special-thanks a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    .special-thanks a:hover {
+      text-decoration: underline;
+    }
+
+    .section {
+      background-color: var(--light-bg);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .section h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      text-shadow: var(--glow);
+    }
+
+    .section p {
+      margin-bottom: 15px;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    .feature-list li {
+      margin: 15px 0;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.03);
+      border-radius: 5px;
+      border: 1px solid rgba(0, 204, 255, 0.2);
+      color: var(--text-color);
+    }
+
+    .feature-list li strong {
+      color: var(--secondary-color);
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 10px;
+    }
+
+    .highlight {
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Special Thanks Section Styles */
+    .special-thanks {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 30px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid #00ffff;
+      border-radius: 15px;
+      text-align: center;
+    }
+
+    .special-thanks h2 {
+      color: #00ffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .special-thanks p {
+      color: #fff;
+      font-size: 1.1em;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .special-thanks .highlight {
+      color: #ff00ff;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>🔌 Start Here: Welcome to the World of Networks</h1>
+    
+    <div class="section">
+      <p>🌍 The Internet connects us all — but do you understand how?</p>
+      <p>Every time you send a WhatsApp message, open Instagram, or stream a video — you're using a network.</p>
+      <p>But do you know what's happening behind the scenes?</p>
+      
+      <p>If you've ever wondered how data travels, what an IP address does, or what routers actually do — you're in the right place.</p>
+    </div>
+
+    <div class="section">
+      <h2>🚨 Why This Matters</h2>
+      <p>Whether you dream of working in cybersecurity, want to understand the digital world better, or just upgrade your skills — this is where it all begins.</p>
+      
+      <p>Every cyberattack, every secure app, every online service — it all runs on networking foundations.</p>
+      <p>If you don't understand how networks work, you're missing the whole picture.</p>
+      
+      <p>Learning cybersecurity without networking is like trying to drive without knowing what brakes are.</p>
+    </div>
+
+    <div class="section">
+      <h2>Real World Cyber Stories That Shocked the World:</h2>
+
+      <div class="story-box">
+        <h3>🧨 STUXNET (2010)</h3>
+        <p>It looked like just another worm.</p>
+        <p>But under the hood, it was military-grade sabotage, written by elite intelligence agencies — and it had one target: Iran's nuclear program.</p>
+        <p>Stuxnet silently infiltrated computers through USB drives.</p>
+        <p>It didn't just spy or steal. It attacked the industrial control systems that ran uranium-enriching centrifuges at Natanz.</p>
+        <p>It spun them too fast, too slow, then back again — breaking them down while lying to engineers with fake sensor data.</p>
+        <p>They saw normal readings. Meanwhile, the machines were self-destructing.</p>
+        <ul class="feature-list">
+          <li>☠️ Over 1,000 centrifuges destroyed.</li>
+          <li>⚔️ This was the first cyber attack to cause real-world physical destruction.</li>
+          <li>👁️ Believed to be a joint operation between the U.S. and Israel — but never officially confirmed.</li>
+        </ul>
+        <p>💥 The age of digital warfare began with a silent line of code.</p>
+        <a href="https://en.wikipedia.org/wiki/Stuxnet" target="_blank" class="highlight">Learn more about Stuxnet</a>
+      </div>
+
+      <div class="story-box">
+        <h3>🏥 WannaCry: Hospitals Held Hostage (2017)</h3>
+        <p>It spread like wildfire across the globe in just hours.</p>
+        <p>A weaponized Windows exploit — stolen from the NSA — was turned into a ransomware worm by shadowy hackers known as the Lazarus Group (linked to North Korea).</p>
+        <p>WannaCry didn't knock on doors. It kicked them in.</p>
+        <p>It encrypted everything on infected computers and demanded payment in Bitcoin.</p>
+        <p>In the UK alone, the National Health Service (NHS) was devastated:</p>
+        <ul class="feature-list">
+          <li>Ambulances rerouted</li>
+          <li>Surgeries canceled</li>
+          <li>Critical patient records locked</li>
+        </ul>
+        <p>In total:</p>
+        <ul class="feature-list">
+          <li>💻 200,000+ systems infected</li>
+          <li>🌍 150+ countries affected</li>
+          <li>🧠 Billions in damage</li>
+        </ul>
+        <p>And all from a single, unpatched vulnerability.</p>
+        <a href="https://www.ionos.com/digitalguide/server/security/wannacry/" target="_blank" class="highlight">Learn more about WannaCry</a>
+      </div>
+
+      <div class="story-box">
+        <h3>🛢️ Colonial Pipeline: Fuel Panic in America (2021)</h3>
+        <p>One weak password. That's all it took.</p>
+        <p>A group called DarkSide breached Colonial Pipeline's network using a compromised VPN login.</p>
+        <p>Once inside, they encrypted critical systems and demanded ransom.</p>
+        <p>Colonial — supplying nearly half the fuel to the U.S. East Coast — had no choice but to shut everything down.</p>
+        <p>What followed was chaos:</p>
+        <ul class="feature-list">
+          <li>🛢️ Gas stations emptied out</li>
+          <li>⛽ Long lines, hoarding, and panic buying</li>
+          <li>✈️ Airlines rerouted flights due to fuel shortages</li>
+        </ul>
+        <p>Eventually, Colonial paid a $4.4 million ransom, though much of it was later recovered by the FBI.</p>
+        <p>All because of one bad password and no multi-factor authentication.</p>
+        <a href="https://reliaquest.com/blog/colonial-pipeline-ransomware-attack/" target="_blank" class="highlight">Learn more about Colonial Pipeline attack</a>
+      </div>
+
+      <div class="story-box">
+        <h3>🏛️ SolarWinds: A Trojan Horse in Government (2020)</h3>
+        <p>It started with a software update — trusted, signed, and delivered by SolarWinds, a major IT vendor.</p>
+        <p>But hidden inside that update was a backdoor, inserted by suspected Russian state hackers (known as APT29 or "Cozy Bear").</p>
+        <p>This wasn't ransomware. It was espionage on a global scale:</p>
+        <ul class="feature-list">
+          <li>🕵️‍♂️ 18,000+ customers received the poisoned update</li>
+          <li>🇺🇸 U.S. agencies infiltrated: Department of Homeland Security, Treasury, Commerce, and more</li>
+          <li>🧪 Private companies compromised: Microsoft, FireEye, and beyond</li>
+        </ul>
+        <p>What made it terrifying? It went undetected for 9 months.</p>
+        <p>The attackers didn't just break in — they blended in, studying systems and stealing secrets quietly.</p>
+        <p>🎯 The perfect modern spy operation — launched through a trusted software update.</p>
+        <a href="https://www.techtarget.com/whatis/feature/SolarWinds-hack-explained-Everything-you-need-to-know" target="_blank" class="highlight">Learn more about SolarWinds</a>
+      </div>
+
+      <div class="story-box">
+        <h3>🧠 Cambridge Analytica: Hacked Minds, Not Machines (2018)</h3>
+        <p>No firewalls were breached. No data was stolen.</p>
+        <p>Instead, your own clicks, likes, and shares were used against you.</p>
+        <p>Cambridge Analytica harvested Facebook data on 87 million users — without their consent.</p>
+        <p>Using psychographic profiling, they served people hyper-targeted political ads that manipulated emotions and influenced voting behavior.</p>
+        <p>This wasn't hacking devices.</p>
+        <p>It was hacking beliefs, opinions, and democracy itself.</p>
+        <a href="https://www.businessinsider.com/cambridge-analytica-a-guide-to-the-trump-linked-data-firm-that-harvested-50-million-facebook-profiles-2018-3" target="_blank" class="highlight">Learn more about Cambridge Analytica</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🌐 What You'll Learn</h2>
+      <p>This isn't just theory. It's interactive, visual, quiz-based learning — in plain English, especially for beginners with no prior knowledge, or for students who want to review their base knowledge.</p>
+      <p>Each lesson builds step-by-step, teaching you:</p>
+      <ul class="feature-list">
+        <li>What exactly is a network? What are clients and servers?</li>
+        <li>What do cables, switches, and routers do?</li>
+        <li>How do computers "talk" to each other using protocols?</li>
+        <li>What's the difference between internal and external IP addresses?</li>
+        <li>How do models like OSI and TCP/IP work behind the scene and more!</li>
+      </ul>
+      
+      <p>It all starts with the basics.</p>
+      <p>And once you understand them — the entire digital world becomes visible.</p>
+    </div>
+
+    <div class="section">
+      <h2>🎯 No fluff. Just action.</h2>
+      <p>📘 Clear language. Real examples.</p>
+      <p>🧠 No prior knowledge needed.</p>
+    </div>
+
+    <div class="special-thanks">
+      <h2>🌟 Special Thanks</h2>
+      <p>I would like to express my sincere gratitude to <a href="https://il.linkedin.com/in/danielpetri" target="_blank" class="highlight">Daniel Petri</a>, from whom I learned so much — both through his book and his teachings. His clear explanations and deep knowledge were a big part of my learning journey, and I'm grateful for the impact he had on my understanding of networking.</p>
+      <p>I also want to thank SEE Security, one of the world's most experienced cybersecurity schools, based in Israel — a recognized global cyber powerhouse. With over 20 years of training professionals, including many from Israel's defense and security sectors.</p>
+    </div>
+  </div>
+  <script src="progress-bar.js"></script>
+  <script type="module">
+    import { initializeScrollBadge } from './badges.js';
+    
+    // Initialize scroll-based badge earning for level 1 (Introduction)
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeScrollBadge('level1');
+    });
+  </script>
+  <script src="js/script.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/home-button.js"></script>
+</body>
+</html> 

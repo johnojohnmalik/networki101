@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Network Cables Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="progress-bar.css">
+    <style>
+        .question-counter {
+            text-align: center;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+        .question {
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+        .option-btn.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #0f0;
+        }
+        .option-btn.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #f00;
+        }
+        #next-btn {
+            background: #0ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #next-btn:hover {
+            background: #00cccc;
+        }
+        #score {
+            color: #0ff;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        @media screen and (max-width: 768px) {
+            .quiz-container {
+                padding: 15px;
+            }
+
+            .question {
+                font-size: 1.1em;
+            }
+
+            .option-btn {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+
+            .question-counter {
+                font-size: 1em;
+                margin: 15px 0;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .quiz-container {
+                padding: 10px;
+            }
+
+            .question {
+                font-size: 1em;
+                margin-bottom: 15px;
+            }
+
+            .option-btn {
+                padding: 14px 12px;
+                font-size: 0.9rem;
+                margin: 8px 0;
+                min-height: 44px;
+            }
+
+            #next-btn {
+                width: 100%;
+                padding: 14px 18px;
+                min-height: 44px;
+            }
+
+            .question-counter {
+                font-size: 0.9em;
+                margin: 12px 0;
+            }
+
+            #score {
+                font-size: 1em;
+                margin: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Network Cables Quiz</h1>
+        <div class="question-counter">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+        <div id="quiz">
+            <!-- Quiz content will be injected here -->
+        </div>
+        <div id="score"></div>
+        <button id="next-btn" style="display:none;">Next</button>
+    </div>
+    <div id="celebration-overlay" style="display:none;"></div>
+    <script src="cables-questions.js"></script>
+    <script src="js/celebration.js"></script>
+    <script src="progress-bar.js"></script>
+    <script src="js/home-button.js"></script>
+    <script>
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+
+        // Get DOM elements
+        const quizContainer = document.getElementById('quiz');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const nextBtn = document.getElementById('next-btn');
+        const scoreDiv = document.getElementById('score');
+
+        // Initialize quiz
+        function initializeQuiz() {
+            console.log('Initializing cables quiz...');
+            totalQuestionsSpan.textContent = questions.length;
+            showQuestion();
+        }
+
+        // Show current question
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestion];
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            
+            let html = `
+                <div class="question">
+                    <p>${currentQuestion + 1}. ${question.question}</p>
+                    <ul class="options">
+            `;
+            
+            question.options.forEach((option, index) => {
+                html += `
+                    <li>
+                        <button class="option-btn" onclick="selectAnswer(${index})">
+                            ${option}
+                        </button>
+                    </li>
+                `;
+            });
+            
+            html += `
+                    </ul>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            nextBtn.style.display = 'none';
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option-btn');
+            const isCorrect = question.options[selectedIndex] === question.answer;
+            
+            // Disable all options
+            options.forEach(option => {
+                option.disabled = true;
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark correct answer
+            options.forEach((option, index) => {
+                if (question.options[index] === question.answer) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Update score and streak
+            if (isCorrect) {
+                score++;
+                streak++;
+                if (streak % 5 === 0) {
+                    showCelebration();
+                }
+            } else {
+                streak = 0;
+            }
+            
+            // Show next button
+            nextBtn.style.display = 'block';
+        }
+
+        // Show celebration for streaks
+        function showCelebration() {
+            const celebration = new Celebration();
+            celebration.celebrate(streak);
+        }
+
+        // Next question
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Show results
+        function showResults() {
+            const percentage = (score / questions.length) * 100;
+            
+            quizContainer.innerHTML = `
+                <div class="question">
+                    <h2>🎉 Quiz Complete!</h2>
+                    <p>Your score: ${score} out of ${questions.length} (${percentage.toFixed(1)}%)</p>
+                    <p>Highest streak: ${streak}</p>
+                    <div style="margin-top: 20px;">
+                        <button class="option-btn" onclick="location.reload()">Try Again</button>
+                        <button class="option-btn" onclick="window.location.href='cables.html'">Return to Module</button>
+                    </div>
+                </div>
+            `;
+            
+            nextBtn.style.display = 'none';
+            
+            // Dispatch quiz complete event for navigation
+            window.dispatchEvent(new CustomEvent('quizComplete'));
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+
+        // Initialize quiz when page loads
+        window.addEventListener('load', initializeQuiz);
+    </script>
+</body>
+</html> 

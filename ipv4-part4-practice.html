@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 Part 4: Subnet Mask Practice</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="progress-bar.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .question-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--primary-color);
+            overflow-x: auto;
+            word-wrap: break-word;
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            word-wrap: break-word;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .option {
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .option:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateX(10px);
+        }
+
+        .option.selected {
+            background: rgba(0, 255, 255, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .answer {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            display: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-color);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .next-button {
+            padding: 15px 30px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .next-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .next-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid var(--primary-color);
+            display: none;
+        }
+
+        .result-container h2 {
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 1.5em;
+            color: var(--text-color);
+            margin-bottom: 30px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .restart-button, .next-topic-button {
+            padding: 15px 30px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover, .next-topic-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .streak-display {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--accent-color);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .celebration-content {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .celebration-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .celebration-content p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .cyber-firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: firework 1s ease-out forwards;
+        }
+
+        @keyframes firework {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 10px;
+            }
+            
+            .question-container {
+                padding: 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="celebration-container" id="celebrationContainer">
+        <div class="celebration-content">
+            <h2 id="streak-number">Streak 5!</h2>
+            <p id="cyber-title">Amazing Streak!</p>
+        </div>
+    </div>
+    
+    <div class="quiz-container">
+        <div class="progress-bar">
+            <div class="progress" style="width: 0%"></div>
+        </div>
+        <div class="question-number">Question 1 of <span id="total-questions">30</span></div>
+        <div class="streak-display">Current Streak: <span id="current-streak">0</span></div>
+        <div class="question-container">
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div class="answer" id="answer">
+                <div class="answer-text"></div>
+                <div class="explanation"></div>
+            </div>
+            <button class="next-button" id="next-btn" style="display: none;">Next Question</button>
+        </div>
+        <div class="result-container" id="result-container">
+            <h2>Quiz Complete!</h2>
+            <div class="score">Your Score: <span id="final-score">0</span>/<span id="final-total">30</span></div>
+            <div class="button-container">
+                <button class="restart-button" id="restart-btn">Restart Quiz</button>
+                <button class="next-topic-button" id="next-topic-btn" style="display: none;">Next Topic</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="progress-bar.js"></script>
+    <script src="js/navigation.js"></script>
+    
+    <!-- Stage 4 Practice Quiz Script -->
+    <script>
+        // Questions array for Stage 4 Practice
+        const questions = [
+            {
+                type: 'multiple-choice',
+                question: 'What is the network address of 192.168.90.77/20?',
+                hint: '/20 means the first 20 bits are the Network ID. Look at the 3rd octet, find the jump value using the subnet chart, round down to nearest multiple.',
+                options: [
+                    '192.168.80.0',
+                    '192.168.64.0',
+                    '192.168.90.0',
+                    '192.168.0.0'
+                ],
+                correctAnswer: '192.168.80.0',
+                explanation: 'The /20 means we need to look at the third octet. The jump value for /20 is 16, so we round 90 down to the nearest multiple of 16, which is 80.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'A subnet mask tells us how much of an IP address belongs to the ___________ and how much to the ___________.',
+                hint: 'Think about the two main parts of an IP address - one identifies the network, the other identifies the device.',
+                options: [
+                    'network, host',
+                    'subnet, device',
+                    'router, computer',
+                    'gateway, endpoint'
+                ],
+                correctAnswer: 'network, host',
+                explanation: 'The subnet mask separates the IP address into two parts: the network portion (which identifies the network) and the host portion (which identifies the specific device on that network).'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the CIDR notation for the subnet mask 255.255.255.0?',
+                hint: 'Count the number of 1s in the binary representation of the subnet mask.',
+                options: [
+                    '/24',
+                    '/16',
+                    '/8',
+                    '/32'
+                ],
+                correctAnswer: '/24',
+                explanation: '255.255.255.0 has 24 bits set to 1, so it\'s written as /24 in CIDR notation.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'How many usable hosts are available in a /26 subnet?',
+                hint: 'Remember to subtract 2 from the total number of hosts (network and broadcast addresses).',
+                options: [
+                    '62',
+                    '64',
+                    '126',
+                    '128'
+                ],
+                correctAnswer: '62',
+                explanation: 'A /26 has 6 bits for hosts (32-26=6). 2^6 = 64 total addresses. Subtract 2 for network and broadcast addresses, leaving 62 usable hosts.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the subnet mask for /28 in decimal notation?',
+                hint: 'Convert the first 28 bits to 1s and the rest to 0s, then convert to decimal.',
+                options: [
+                    '255.255.255.240',
+                    '255.255.255.248',
+                    '255.255.255.224',
+                    '255.255.255.252'
+                ],
+                correctAnswer: '255.255.255.240',
+                explanation: '/28 means the first 28 bits are 1s. This translates to 255.255.255.240 in decimal.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the network address for 10.10.128.55/17?',
+                hint: 'The jump value for /17 is 128 in the third octet.',
+                options: [
+                    '10.10.128.0',
+                    '10.10.0.0',
+                    '10.10.64.0',
+                    '10.10.192.0'
+                ],
+                correctAnswer: '10.10.128.0',
+                explanation: '/17 means we look at the third octet. The jump value is 128, so the network starts at 128.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'Which subnet mask would you use to create subnets with exactly 30 usable hosts each?',
+                hint: 'You need enough bits to accommodate 30 hosts plus 2 reserved addresses.',
+                options: [
+                    '/27',
+                    '/26',
+                    '/28',
+                    '/25'
+                ],
+                correctAnswer: '/27',
+                explanation: '/27 gives you 5 bits for hosts (2^5 = 32 addresses). Subtract 2 for network and broadcast, leaving 30 usable hosts.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the broadcast address for the network 192.168.64.0/26?',
+                hint: 'The broadcast address is the last address in the subnet.',
+                options: [
+                    '192.168.64.63',
+                    '192.168.64.255',
+                    '192.168.64.127',
+                    '192.168.64.31'
+                ],
+                correctAnswer: '192.168.64.63',
+                explanation: '/26 has a block size of 64. The network is 192.168.64.0, so the broadcast is 192.168.64.63 (64-1).'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the first usable IP address in the subnet 172.16.32.0/27?',
+                hint: 'The first usable address is one more than the network address.',
+                options: [
+                    '172.16.32.1',
+                    '172.16.32.0',
+                    '172.16.32.2',
+                    '172.16.32.32'
+                ],
+                correctAnswer: '172.16.32.1',
+                explanation: 'The network address is 172.16.32.0, so the first usable host address is 172.16.32.1.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the last usable IP address in the subnet 10.0.0.0/24?',
+                hint: 'The last usable address is one less than the broadcast address.',
+                options: [
+                    '10.0.0.254',
+                    '10.0.0.255',
+                    '10.0.0.253',
+                    '10.0.0.252'
+                ],
+                correctAnswer: '10.0.0.254',
+                explanation: 'The broadcast address is 10.0.0.255, so the last usable host address is 10.0.0.254.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the binary representation of the subnet mask /19?',
+                hint: 'Convert the first 19 bits to 1s and the rest to 0s.',
+                options: [
+                    '11111111.11111111.11100000.00000000',
+                    '11111111.11111111.11110000.00000000',
+                    '11111111.11111111.11000000.00000000',
+                    '11111111.11111111.11111000.00000000'
+                ],
+                correctAnswer: '11111111.11111111.11100000.00000000',
+                explanation: '/19 means the first 19 bits are 1s, and the rest are 0s.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the network address for 192.168.45.200 with subnet mask 255.255.192.0?',
+                hint: 'Convert the subnet mask to CIDR and find the jump value.',
+                options: [
+                    '192.168.0.0',
+                    '192.168.64.0',
+                    '192.168.128.0',
+                    '192.168.192.0'
+                ],
+                correctAnswer: '192.168.0.0',
+                explanation: '255.255.192.0 is /18. The jump value is 64, so we round 45 down to 0.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'How many subnets can you create with a /26 subnet mask from a /24 network?',
+                hint: 'Count how many bits were borrowed from the host portion.',
+                options: [
+                    '4',
+                    '2',
+                    '8',
+                    '16'
+                ],
+                correctAnswer: '4',
+                explanation: 'Borrowing 2 bits (26-24=2) gives us 2^2 = 4 subnets.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the subnet mask for a network that needs to support 1000 hosts?',
+                hint: 'You need enough bits to accommodate 1000 hosts plus 2 reserved addresses.',
+                options: [
+                    '/22',
+                    '/21',
+                    '/23',
+                    '/24'
+                ],
+                correctAnswer: '/22',
+                explanation: 'You need at least 10 bits for hosts (2^10 = 1024 addresses). 32-10 = 22, so the subnet mask is /22.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the broadcast address for 172.16.45.200/26?',
+                hint: 'Find the network address first, then add the block size minus 1.',
+                options: [
+                    '172.16.45.255',
+                    '172.16.45.191',
+                    '172.16.45.127',
+                    '172.16.45.63'
+                ],
+                correctAnswer: '172.16.45.255',
+                explanation: '/26 has a block size of 64. The network is 172.16.45.192, so the broadcast is 172.16.45.255.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the first usable IP address in the subnet 192.168.100.64/27?',
+                hint: 'The first usable address is one more than the network address.',
+                options: [
+                    '192.168.100.65',
+                    '192.168.100.64',
+                    '192.168.100.66',
+                    '192.168.100.63'
+                ],
+                correctAnswer: '192.168.100.65',
+                explanation: 'The network address is 192.168.100.64, so the first usable host address is 192.168.100.65.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the last usable IP address in the subnet 10.10.10.128/26?',
+                hint: 'The last usable address is one less than the broadcast address.',
+                options: [
+                    '10.10.10.190',
+                    '10.10.10.191',
+                    '10.10.10.189',
+                    '10.10.10.192'
+                ],
+                correctAnswer: '10.10.10.190',
+                explanation: 'The broadcast address is 10.10.10.191, so the last usable host address is 10.10.10.190.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the network address for 172.16.45.200/18?',
+                hint: 'The jump value for /18 is 64 in the third octet.',
+                options: [
+                    '172.16.0.0',
+                    '172.16.64.0',
+                    '172.16.128.0',
+                    '172.16.192.0'
+                ],
+                correctAnswer: '172.16.0.0',
+                explanation: '/18 means we look at the third octet. The jump value is 64, so we round 45 down to 0.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the subnet mask for a network that needs to support 50 hosts?',
+                hint: 'You need enough bits to accommodate 50 hosts plus 2 reserved addresses.',
+                options: [
+                    '/26',
+                    '/25',
+                    '/27',
+                    '/28'
+                ],
+                correctAnswer: '/26',
+                explanation: 'You need at least 6 bits for hosts (2^6 = 64 addresses). 32-6 = 26, so the subnet mask is /26.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the broadcast address for 192.168.100.0/25?',
+                hint: 'Find the network address first, then add the block size minus 1.',
+                options: [
+                    '192.168.100.127',
+                    '192.168.100.255',
+                    '192.168.100.128',
+                    '192.168.100.126'
+                ],
+                correctAnswer: '192.168.100.127',
+                explanation: '/25 has a block size of 128. The network is 192.168.100.0, so the broadcast is 192.168.100.127.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the first usable IP address in the subnet 10.0.0.0/28?',
+                hint: 'The first usable address is one more than the network address.',
+                options: [
+                    '10.0.0.1',
+                    '10.0.0.0',
+                    '10.0.0.2',
+                    '10.0.0.16'
+                ],
+                correctAnswer: '10.0.0.1',
+                explanation: 'The network address is 10.0.0.0, so the first usable host address is 10.0.0.1.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the last usable IP address in the subnet 172.16.0.0/24?',
+                hint: 'The last usable address is one less than the broadcast address.',
+                options: [
+                    '172.16.0.254',
+                    '172.16.0.255',
+                    '172.16.0.253',
+                    '172.16.0.252'
+                ],
+                correctAnswer: '172.16.0.254',
+                explanation: 'The broadcast address is 172.16.0.255, so the last usable host address is 172.16.0.254.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the network address for 192.168.45.200/27?',
+                hint: 'The jump value for /27 is 32 in the fourth octet.',
+                options: [
+                    '192.168.45.192',
+                    '192.168.45.160',
+                    '192.168.45.224',
+                    '192.168.45.128'
+                ],
+                correctAnswer: '192.168.45.192',
+                explanation: '/27 means we look at the fourth octet. The jump value is 32, so we round 200 down to 192.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the subnet mask for a network that needs to support 2000 hosts?',
+                hint: 'You need enough bits to accommodate 2000 hosts plus 2 reserved addresses.',
+                options: [
+                    '/21',
+                    '/20',
+                    '/22',
+                    '/23'
+                ],
+                correctAnswer: '/21',
+                explanation: 'You need at least 11 bits for hosts (2^11 = 2048 addresses). 32-11 = 21, so the subnet mask is /21.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the broadcast address for 10.10.10.0/28?',
+                hint: 'Find the network address first, then add the block size minus 1.',
+                options: [
+                    '10.10.10.15',
+                    '10.10.10.16',
+                    '10.10.10.14',
+                    '10.10.10.31'
+                ],
+                correctAnswer: '10.10.10.15',
+                explanation: '/28 has a block size of 16. The network is 10.10.10.0, so the broadcast is 10.10.10.15.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the first usable IP address in the subnet 192.168.1.0/26?',
+                hint: 'The first usable address is one more than the network address.',
+                options: [
+                    '192.168.1.1',
+                    '192.168.1.0',
+                    '192.168.1.2',
+                    '192.168.1.64'
+                ],
+                correctAnswer: '192.168.1.1',
+                explanation: 'The network address is 192.168.1.0, so the first usable host address is 192.168.1.1.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the last usable IP address in the subnet 172.16.10.0/27?',
+                hint: 'The last usable address is one less than the broadcast address.',
+                options: [
+                    '172.16.10.30',
+                    '172.16.10.31',
+                    '172.16.10.29',
+                    '172.16.10.32'
+                ],
+                correctAnswer: '172.16.10.30',
+                explanation: 'The broadcast address is 172.16.10.31, so the last usable host address is 172.16.10.30.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the network address for 10.10.10.200/28?',
+                hint: 'The jump value for /28 is 16 in the fourth octet.',
+                options: [
+                    '10.10.10.192',
+                    '10.10.10.176',
+                    '10.10.10.208',
+                    '10.10.10.160'
+                ],
+                correctAnswer: '10.10.10.192',
+                explanation: '/28 means we look at the fourth octet. The jump value is 16, so we round 200 down to 192.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the subnet mask for a network that needs to support 100 hosts?',
+                hint: 'You need enough bits to accommodate 100 hosts plus 2 reserved addresses.',
+                options: [
+                    '/25',
+                    '/24',
+                    '/26',
+                    '/27'
+                ],
+                correctAnswer: '/25',
+                explanation: 'You need at least 7 bits for hosts (2^7 = 128 addresses). 32-7 = 25, so the subnet mask is /25.'
+            },
+            {
+                type: 'multiple-choice',
+                question: 'What is the broadcast address for 172.16.0.0/26?',
+                hint: 'Find the network address first, then add the block size minus 1.',
+                options: [
+                    '172.16.0.63',
+                    '172.16.0.64',
+                    '172.16.0.62',
+                    '172.16.0.127'
+                ],
+                correctAnswer: '172.16.0.63',
+                explanation: '/26 has a block size of 64. The network is 172.16.0.0, so the broadcast is 172.16.0.63.'
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let quizCompleted = false;
+
+        // Get DOM elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const answerDiv = document.getElementById('answer');
+        const nextBtn = document.getElementById('next-btn');
+        const resultContainer = document.getElementById('result-container');
+        const progressBar = document.querySelector('.progress');
+        const questionNumber = document.querySelector('.question-number');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const finalScoreSpan = document.getElementById('final-score');
+        const finalTotalSpan = document.getElementById('final-total');
+        const restartBtn = document.getElementById('restart-btn');
+        const nextTopicBtn = document.getElementById('next-topic-btn');
+        const streakDisplay = document.querySelector('.streak-display');
+        const currentStreakSpan = document.getElementById('current-streak');
+
+        // Initialize quiz
+        function initializeQuiz() {
+            console.log('Initializing Stage 4 practice quiz...');
+            totalQuestionsSpan.textContent = questions.length;
+            finalTotalSpan.textContent = questions.length;
+            updateStreakDisplay();
+            showQuestion();
+        }
+
+        // Update streak display
+        function updateStreakDisplay() {
+            currentStreakSpan.textContent = streak;
+            if (streak > 0) {
+                streakDisplay.style.display = 'block';
+            } else {
+                streakDisplay.style.display = 'none';
+            }
+        }
+
+        // Show current question
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestion];
+            questionText.textContent = question.question;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Create options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Hide answer and next button
+            answerDiv.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // Update progress
+            updateProgress();
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = optionsContainer.querySelectorAll('.option');
+            const isCorrect = question.options[selectedIndex] === question.correctAnswer;
+            
+            // Disable all options
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Mark correct answer
+            options.forEach((option, index) => {
+                if (question.options[index] === question.correctAnswer) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Update score and streak
+            if (isCorrect) {
+                score++;
+                streak++;
+                if (streak % 5 === 0) {
+                    showCelebration();
+                }
+            } else {
+                streak = 0;
+            }
+            
+            updateStreakDisplay();
+            
+            // Show answer explanation
+            const answerText = answerDiv.querySelector('.answer-text');
+            const explanation = answerDiv.querySelector('.explanation');
+            
+            answerText.textContent = isCorrect ? '✅ Correct!' : '❌ Incorrect';
+            explanation.textContent = question.explanation;
+            
+            answerDiv.style.display = 'block';
+            nextBtn.style.display = 'block';
+        }
+
+        // Show celebration for streaks
+        function showCelebration() {
+            const celebration = document.getElementById('celebrationContainer');
+            const streakNumber = document.getElementById('streak-number');
+            const cyberTitle = document.getElementById('cyber-title');
+            
+            streakNumber.textContent = `Streak ${streak}!`;
+            cyberTitle.textContent = 'Amazing Streak!';
+            celebration.style.display = 'flex';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                celebration.style.display = 'none';
+            }, 3000);
+        }
+
+        // Next question
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Show results
+        function showResults() {
+            document.querySelector('.question-container').style.display = 'none';
+            resultContainer.style.display = 'block';
+            finalScoreSpan.textContent = score;
+            
+            // Show next topic button if score is good
+            if (score >= questions.length * 0.7) {
+                nextTopicBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            quizCompleted = false;
+            
+            document.querySelector('.question-container').style.display = 'block';
+            resultContainer.style.display = 'none';
+            
+            updateStreakDisplay();
+            showQuestion();
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+        nextTopicBtn.addEventListener('click', () => {
+            window.location.href = 'index.html'; // Navigate back to main menu
+        });
+
+        // Initialize quiz when page loads
+        window.addEventListener('load', initializeQuiz);
+    </script>
+</body>
+</html>

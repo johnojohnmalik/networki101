@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OSI & TCP/IP Quiz</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="progress-bar.css">
+  <style>
+    .question-counter {
+      text-align: center;
+      color: #00ffff;
+      font-family: 'Orbitron', sans-serif;
+      margin: 20px 0;
+      font-size: 1.1em;
+    }
+    .quiz-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+    .question {
+      color: #fff;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+    }
+    .option-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid #0ff;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .option-btn:hover {
+      background: rgba(0, 255, 255, 0.2);
+    }
+    .option-btn.correct {
+      background: rgba(0, 255, 0, 0.2);
+      border-color: #0f0;
+    }
+    .option-btn.incorrect {
+      background: rgba(255, 0, 0, 0.2);
+      border-color: #f00;
+    }
+    #next-btn {
+      background: #0ff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #next-btn:hover {
+      background: #00cccc;
+    }
+    #score {
+      color: #0ff;
+      margin: 20px 0;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>OSI & TCP/IP Quiz</h1>
+    <div class="question-counter">Question <span id="current-question">1</span> of <span id="total-questions">35</span></div>
+    <div id="quiz">
+      <!-- Quiz content will be injected here -->
+    </div>
+    <div id="score"></div>
+    <button id="next-btn" class="nav-btn" disabled>Next</button>
+  </div>
+  <div id="celebration-overlay" style="display:none;"></div>
+  <script src="questions.js"></script>
+  <script src="js/celebration.js"></script>
+  <script src="progress-bar.js"></script>
+  <script src="js/home-button.js"></script>
+  <script>
+    let currentQuestion = 0;
+    let score = 0;
+    let streak = 0;
+
+    function showQuestion() {
+      const question = questions[currentQuestion];
+      const quiz = document.getElementById('quiz');
+      const currentQuestionSpan = document.getElementById('current-question');
+      const totalQuestionsSpan = document.getElementById('total-questions');
+      const nextBtn = document.getElementById('next-btn');
+      
+      currentQuestionSpan.textContent = currentQuestion + 1;
+      totalQuestionsSpan.textContent = questions.length;
+      
+      let html = `
+        <div class="question">
+          <p>${currentQuestion + 1}. ${question.question}</p>
+          <div class="options">
+      `;
+      
+      if (question.type === 'mc') {
+        question.options.forEach((option, i) => {
+          html += `
+            <button class="option-btn" onclick="selectAnswer(${i})">
+              ${option}
+            </button>
+          `;
+        });
+      } else if (question.type === 'tf') {
+        html += `
+          <button class="option-btn" onclick="selectAnswer(true)">True</button>
+          <button class="option-btn" onclick="selectAnswer(false)">False</button>
+        `;
+      } else if (question.type === 'oe') {
+        html += `
+          <input type="text" id="answer-input" placeholder="Enter your answer..." style="width: 100%; padding: 10px; margin: 10px 0; background: rgba(0, 255, 255, 0.1); border: 1px solid #0ff; color: #fff;">
+          <button class="option-btn" onclick="submitAnswer()">Submit Answer</button>
+        `;
+      }
+      
+      html += `
+          </div>
+          <div id="feedback" style="margin-top: 20px; padding: 10px; border-radius: 5px; display: none;"></div>
+        </div>
+      `;
+      
+      quiz.innerHTML = html;
+      nextBtn.style.display = 'none';
+      nextBtn.disabled = true;
+    }
+
+    function selectAnswer(selectedAnswer) {
+      const question = questions[currentQuestion];
+      const feedback = document.getElementById('feedback');
+      const nextBtn = document.getElementById('next-btn');
+      
+      let isCorrect = false;
+      
+      if (question.type === 'mc') {
+        isCorrect = selectedAnswer === question.answer;
+      } else if (question.type === 'tf') {
+        isCorrect = selectedAnswer === question.answer;
+      }
+      
+      // Update score and streak
+      if (isCorrect) {
+        score++;
+        streak++;
+        feedback.style.background = 'rgba(0, 255, 0, 0.2)';
+        feedback.style.border = '1px solid #0f0';
+        feedback.style.color = '#0f0';
+        feedback.innerHTML = '✅ Correct!';
+        
+        // Check for streak celebration
+        if (streak % 5 === 0) {
+          showCelebration(streak);
+        }
+      } else {
+        streak = 0;
+        feedback.style.background = 'rgba(255, 0, 0, 0.2)';
+        feedback.style.border = '1px solid #f00';
+        feedback.style.color = '#f00';
+        feedback.innerHTML = '❌ Incorrect. The correct answer is: ' + (question.type === 'mc' ? question.options[question.answer] : question.answer);
+      }
+      
+      feedback.style.display = 'block';
+      nextBtn.style.display = 'block';
+      nextBtn.disabled = false;
+      
+      // Disable all option buttons
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+      });
+    }
+
+    function submitAnswer() {
+      const question = questions[currentQuestion];
+      const answerInput = document.getElementById('answer-input');
+      const feedback = document.getElementById('feedback');
+      const nextBtn = document.getElementById('next-btn');
+      
+      const userAnswer = answerInput.value.toLowerCase().trim();
+      const correctAnswer = question.answer.toLowerCase().trim();
+      
+      const isCorrect = userAnswer === correctAnswer;
+      
+      if (isCorrect) {
+        score++;
+        streak++;
+        feedback.style.background = 'rgba(0, 255, 0, 0.2)';
+        feedback.style.border = '1px solid #0f0';
+        feedback.style.color = '#0f0';
+        feedback.innerHTML = '✅ Correct!';
+        
+        if (streak % 5 === 0) {
+          showCelebration(streak);
+        }
+      } else {
+        streak = 0;
+        feedback.style.background = 'rgba(255, 0, 0, 0.2)';
+        feedback.style.border = '1px solid #f00';
+        feedback.style.color = '#f00';
+        feedback.innerHTML = '❌ Incorrect. The correct answer is: ' + question.answer;
+      }
+      
+      feedback.style.display = 'block';
+      nextBtn.style.display = 'block';
+      nextBtn.disabled = false;
+      answerInput.disabled = true;
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const quiz = document.getElementById('quiz');
+      const percentage = (score / questions.length) * 100;
+      
+      quiz.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <h2>🎉 Quiz Complete!</h2>
+          <p>Your score: ${score} out of ${questions.length} (${percentage.toFixed(1)}%)</p>
+          <p>Highest streak: ${streak}</p>
+          <div style="margin-top: 20px;">
+            <button class="option-btn" onclick="location.reload()">Try Again</button>
+            <button class="option-btn" onclick="window.location.href='osi-module.html'">Return to Module</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('next-btn').style.display = 'none';
+      
+      // Dispatch quiz complete event for navigation
+      window.dispatchEvent(new CustomEvent('quizComplete'));
+    }
+
+    function showCelebration(streak) {
+      // Simple celebration - you can enhance this later
+      alert(`🎉 Amazing! ${streak} correct answers in a row!`);
+    }
+
+    // Add event listener for next button
+    document.getElementById('next-btn').addEventListener('click', nextQuestion);
+
+    // Initialize the quiz
+    window.addEventListener('load', showQuestion);
+  </script>
+</body>
+</html> 

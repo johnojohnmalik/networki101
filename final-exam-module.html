@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Exam - Stage 10</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="progress-bar.css">
+  <style>
+    .module-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .module-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: linear-gradient(135deg, rgba(0, 204, 255, 0.1), rgba(138, 43, 226, 0.1));
+      border-radius: 15px;
+      border: 2px solid rgba(0, 204, 255, 0.3);
+    }
+
+    .module-header h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #00ccff;
+      text-shadow: 0 0 20px rgba(0, 204, 255, 0.5);
+      margin-bottom: 15px;
+      font-size: 2.5em;
+    }
+
+    .stage-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #8a2be2, #4a90e2);
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1em;
+      color: white;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+    }
+
+    .module-description {
+      color: #ccc;
+      font-size: 1.1em;
+      line-height: 1.8;
+      margin-top: 20px;
+    }
+
+    .exam-details {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      border-radius: 10px;
+      margin: 30px 0;
+      border-left: 4px solid #00ccff;
+    }
+
+    .exam-details h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: #00ccff;
+      margin-bottom: 20px;
+    }
+
+    .exam-details ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .exam-details li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0, 204, 255, 0.1);
+      color: #aaa;
+    }
+
+    .exam-details li:last-child {
+      border-bottom: none;
+    }
+
+    .exam-details li strong {
+      color: #00ccff;
+      margin-right: 10px;
+    }
+
+    .requirements-box {
+      background: linear-gradient(135deg, rgba(255, 149, 0, 0.1), rgba(255, 51, 102, 0.1));
+      padding: 25px;
+      border-radius: 10px;
+      margin: 30px 0;
+      border: 2px solid rgba(255, 149, 0, 0.3);
+    }
+
+    .requirements-box h3 {
+      font-family: 'Orbitron', sans-serif;
+      color: #ff9500;
+      margin-bottom: 15px;
+    }
+
+    .requirements-box p {
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .module-btn {
+      padding: 15px 40px;
+      font-size: 1.2em;
+      background: linear-gradient(135deg, #4a90e2, #00ccff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 204, 255, 0.3);
+    }
+
+    .module-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 204, 255, 0.5);
+    }
+
+    .home-btn {
+      background: linear-gradient(135deg, #6c757d, #495057);
+    }
+
+    .home-btn:hover {
+      box-shadow: 0 10px 25px rgba(108, 117, 125, 0.5);
+    }
+
+    .coverage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .coverage-item {
+      background: rgba(0, 204, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 204, 255, 0.2);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .coverage-item:hover {
+      background: rgba(0, 204, 255, 0.1);
+      transform: scale(1.05);
+    }
+
+    .coverage-item strong {
+      color: #00ccff;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .coverage-item span {
+      color: #aaa;
+      font-size: 0.9em;
+    }
+
+    .warning-icon {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-container">
+    <div class="module-header">
+      <div class="stage-badge">🏆 STAGE 10 - FINAL EXAM</div>
+      <h1>Comprehensive Network Fundamentals Exam</h1>
+      <div class="module-description">
+        <p>Test your complete understanding of networking fundamentals with this comprehensive final exam. This exam covers all topics from Stages 1-9 and will validate your mastery of the material.</p>
+      </div>
+    </div>
+
+    <div class="exam-details">
+      <h2>📋 Exam Format</h2>
+      <ul>
+        <li><strong>Total Questions:</strong> 40 questions</li>
+        <li><strong>Question Types:</strong> Multiple choice</li>
+        <li><strong>Topics Covered:</strong> All 9 previous stages</li>
+        <li><strong>Time Limit:</strong> No time limit - take your time!</li>
+        <li><strong>Question Order:</strong> Randomly selected and shuffled</li>
+        <li><strong>Immediate Feedback:</strong> See correct answers after each question</li>
+      </ul>
+    </div>
+
+    <div class="requirements-box">
+      <div class="warning-icon">⚠️</div>
+      <h3>Passing Requirements</h3>
+      <p><strong>Minimum Score:</strong> 70% (28 out of 40 questions correct)</p>
+      <p>You can retake the exam as many times as needed. Each attempt will present questions in a different order to reinforce your learning.</p>
+    </div>
+
+    <div class="exam-details">
+      <h2>📚 Topics Covered</h2>
+      <div class="coverage-grid">
+        <div class="coverage-item">
+          <strong>Stage 1</strong>
+          <span>Networking Fundamentals</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 2</strong>
+          <span>Network Basic Terms</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 3</strong>
+          <span>Network Cables</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 4</strong>
+          <span>OSI & TCP-IP Models</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 5</strong>
+          <span>Network Protocols</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 6</strong>
+          <span>DHCP & DNS</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 7</strong>
+          <span>IP Binary & Security</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 8</strong>
+          <span>Subnet Masks</span>
+        </div>
+        <div class="coverage-item">
+          <strong>Stage 9</strong>
+          <span>Advanced Subnetting</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exam-details">
+      <h2>💡 Tips for Success</h2>
+      <ul>
+        <li><strong>Review All Stages:</strong> Make sure you've completed all previous stages before taking the exam</li>
+        <li><strong>Take Your Time:</strong> There's no time limit, so read each question carefully</li>
+        <li><strong>Learn From Mistakes:</strong> If you don't pass, review the topics you struggled with and try again</li>
+        <li><strong>Use Feedback:</strong> Each question shows the correct answer immediately after you respond</li>
+      </ul>
+    </div>
+
+    <div class="action-buttons">
+      <button class="module-btn" onclick="window.location.href='final-exam.html'">
+        🎓 Start Final Exam
+      </button>
+      <button class="module-btn home-btn" onclick="window.location.href='index.html'">
+        🏠 Back to Home
+      </button>
+    </div>
+  </div>
+
+  <script src="progress-bar.js"></script>
+  <script src="js/home-button.js"></script>
+</body>
+</html>
+
+

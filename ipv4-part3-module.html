@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 Part 3: IP Addresses in Binary & Network Security</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="progress-bar.css">
+    <style>
+        .section {
+            background-color: var(--light-bg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-shadow: var(--glow);
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 5px;
+            border: 1px solid rgba(0, 204, 255, 0.2);
+            color: var(--text-color);
+        }
+
+        .feature-list li strong {
+            color: var(--secondary-color);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+        .highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            border: 1px solid var(--primary-color);
+        }
+
+        .binary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .binary-table td {
+            padding: 5px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .binary-table .header {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .binary-table .value {
+            color: var(--accent-color);
+        }
+
+        .exercise {
+            background: rgba(0, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid var(--primary-color);
+        }
+
+        .exercise h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .solution {
+            background: rgba(255, 0, 255, 0.05);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .class-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .class-table th, .class-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .class-table th {
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .class-table tr:nth-child(even) {
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .class-a { color: #4CAF50; }
+        .class-b { color: #2196F3; }
+        .class-c { color: #FFC107; }
+        .class-d { color: #9C27B0; }
+        .class-e { color: #F44336; }
+
+        .format-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid var(--primary-color);
+            font-family: monospace;
+        }
+
+        /* Badge celebration styles */
+        .badge-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .celebration-content {
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .badge-icon {
+            margin-bottom: 20px;
+        }
+        
+        .badge-icon img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+        
+        .celebration-content h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .celebration-content p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+        
+        .celebration-content .description {
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        /* Scroll completion message styles */
+        .scroll-completion-message,
+        .time-completion-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #00ff00, #008000);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            z-index: 1000;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        .time-completion-message {
+            background: linear-gradient(45deg, #ff00ff, #800080);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+        
+        .message-content h3 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .message-content p {
+            margin: 5px 0;
+            font-size: 1em;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.5); }
+            to { transform: scale(1); }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>IPv4 Part 3: IP Addresses in Binary & Network Security</h1>
+
+        <div class="section">
+            <h2>🔢 Introduction to IP Addresses</h2>
+            <p>An IP address (Internet Protocol address) is a unique numerical identifier assigned to every device connected to a network. Think of it as a postal address for your computer – it tells other devices exactly where to send information across the internet or local network.</p>
+            <p>For this chapter, we'll focus on IPv4 addresses, which are the most common type you'll encounter. An IPv4 address looks like this:</p>
+            <div class="code-block">192.168.1.1</div>
+            <p>This format uses four numbers separated by dots, where each number ranges from 0 to 255. This is called dotted decimal notation – it's designed to be human-readable. However, computers don't actually "think" in decimal numbers. They work entirely in binary (1s and 0s).</p>
+            <p>The key insight is this: every IP address you see in decimal format is actually a 32-bit binary number that's been converted for human convenience. Understanding this binary foundation is crucial for mastering network security concepts.</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Why Binary Matters in IP Addressing</h2>
+            <p>Network operations are fundamentally based on binary logic. Here's why understanding binary is essential for cybersecurity professionals:</p>
+            <ul class="feature-list">
+                <li><strong>Subnetting and Network Design:</strong> When you create network segments or subnets, you're essentially manipulating binary bits to determine which portion represents the network and which represents individual hosts.</li>
+                <li><strong>Routing Decisions:</strong> Routers use binary operations to determine the best path for data packets. They perform bitwise operations on IP addresses to match them against routing tables.</li>
+                <li><strong>Security Analysis:</strong> Understanding binary helps you:
+                    <ul>
+                        <li>Identify IP address ranges and patterns</li>
+                        <li>Detect network reconnaissance attempts</li>
+                        <li>Analyze suspicious traffic patterns</li>
+                        <li>Configure firewall rules more precisely</li>
+                        <li>Understand how attackers might manipulate addressing</li>
+                    </ul>
+                </li>
+                <li><strong>Address Classification:</strong> IP addresses are classified into different classes (A, B, C) based on their binary patterns, which determines their default network/host boundaries.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔄 How to Convert IP Addresses to Binary</h2>
+            <p>Let's convert the IP address 192.168.1.1 to binary step by step.</p>
+            
+            <h3>Understanding Octets</h3>
+            <p>An IPv4 address consists of four octets (8-bit groups). Each octet can represent values from 0 to 255 because:</p>
+            <ul class="feature-list">
+                <li>8 bits can represent 2^8 = 256 different values</li>
+                <li>Starting from 0, this gives us the range 0-255</li>
+            </ul>
+
+            <h3>Step-by-Step Conversion</h3>
+            <p>Binary is a number system that uses only two digits: 0 and 1. In binary, each digit (called a bit) represents a power of 2. When converting decimal to binary, we ask "Do we need this power of 2?" - 1 means "yes, we need this value" and 0 means "no, we don't need this value". This is why binary is perfect for computers - it's like a series of on/off switches!</p>
+            
+            <div class="exercise">
+                <h3>Octet 1: 192</h3>
+                <p>To convert 192 to binary, we find which powers of 2 add up to 192:</p>
+                <p>128 + 64 = 192</p>
+                <div class="code-block">
+                    <table class="binary-table">
+                        <tr>
+                            <td class="header">128</td>
+                            <td class="header">64</td>
+                            <td class="header">32</td>
+                            <td class="header">16</td>
+                            <td class="header">8</td>
+                            <td class="header">4</td>
+                            <td class="header">2</td>
+                            <td class="header">1</td>
+                        </tr>
+                        <tr>
+                            <td class="value">1</td>
+                            <td class="value">1</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>So 192 = 11000000</p>
+            </div>
+
+            <div class="exercise">
+                <h3>Octet 2: 168</h3>
+                <p>168 = 128 + 32 + 8</p>
+                <div class="code-block">
+                    <table class="binary-table">
+                        <tr>
+                            <td class="header">128</td>
+                            <td class="header">64</td>
+                            <td class="header">32</td>
+                            <td class="header">16</td>
+                            <td class="header">8</td>
+                            <td class="header">4</td>
+                            <td class="header">2</td>
+                            <td class="header">1</td>
+                        </tr>
+                        <tr>
+                            <td class="value">1</td>
+                            <td class="value">0</td>
+                            <td class="value">1</td>
+                            <td class="value">0</td>
+                            <td class="value">1</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>So 168 = 10101000</p>
+            </div>
+
+            <div class="exercise">
+                <h3>Octet 3 & 4: 1</h3>
+                <p>1 = 1</p>
+                <div class="code-block">
+                    <table class="binary-table">
+                        <tr>
+                            <td class="header">128</td>
+                            <td class="header">64</td>
+                            <td class="header">32</td>
+                            <td class="header">16</td>
+                            <td class="header">8</td>
+                            <td class="header">4</td>
+                            <td class="header">2</td>
+                            <td class="header">1</td>
+                        </tr>
+                        <tr>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">0</td>
+                            <td class="value">1</td>
+                        </tr>
+                    </table>
+                </div>
+                <p>So 1 = 00000001</p>
+            </div>
+
+            <h3>Complete Binary Representation</h3>
+            <div class="code-block" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">192.168.1.1 = 11000000.10101000.00000001.00000001</div>
+        </div>
+
+        <div class="section">
+            <h2>📝 Practice Section</h2>
+            
+            <div class="exercise">
+                <h3>Exercise 1: Basic Binary Conversion</h3>
+                <p>Convert these IP addresses to binary:</p>
+                <p>a) 10.0.0.1</p>
+                <div class="solution">
+                    <p>Solution:</p>
+                    <div class="code-block" style="word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">
+                        10 = 00001010
+                        0 = 00000000
+                        0 = 00000000
+                        1 = 00000001
+                        
+                        Answer: 00001010.00000000.00000000.00000001
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Exercise 2: Network and Host Identification</h3>
+                <p>For the IP address 203.0.113.25/28:</p>
+                <p>a) What class is this IP address?</p>
+                <div class="solution">
+                    <p>Solution: 203 in binary starts with 11001011, which begins with 110, making this a Class C address.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Tools and Tips</h2>
+            <h3>Essential Tools</h3>
+            <ul class="feature-list">
+                <li><strong>Binary Calculators:</strong>
+                    <ul>
+                        <li>Windows Calculator (Programmer mode)</li>
+                        <li>Online binary converters</li>
+                        <li>Subnet calculators (subnettingpractice.com)</li>
+                    </ul>
+                </li>
+                <li><strong>Network Analysis Tools:</strong>
+                    <ul>
+                        <li>Wireshark (for packet analysis)</li>
+                        <li>Nmap (for network discovery)</li>
+                        <li>ipcalc (Linux command-line tool)</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🎓 Key Takeaways</h2>
+            <p>Understanding binary representation of IP addresses is fundamental to cybersecurity because:</p>
+            <ul class="feature-list">
+                <li>Networks operate on binary logic – every routing decision, subnet calculation, and address comparison happens in binary</li>
+                <li>Security tools rely on binary operations – from firewalls to intrusion detection systems</li>
+                <li>Troubleshooting requires binary thinking – network issues often stem from incorrect binary calculations</li>
+                <li>Advanced attacks exploit binary vulnerabilities – understanding the underlying system helps detect and prevent them</li>
+            </ul>
+            <p>Remember: every time you see an IP address, there's a 32-bit binary number behind it that tells the real story of how networks communicate.</p>
+        </div>
+
+        <div class="section">
+            <h2>🧠 Classful IP Addressing</h2>
+            <p>When IPv4 was first defined in 1981, it was decided that the 32-bit IP address would be divided into two parts:</p>
+            <ul class="feature-list">
+                <li><strong>The first, leftmost part</strong> called the Network ID</li>
+                <li><strong>The second, rightmost part</strong> called the Host ID</li>
+            </ul>
+            <p>This division had to follow several pre-defined rules. The rules relevant here say that all computers on the same physical network (same segment) must have the same Network ID, but must differ in their Host ID.</p>
+            <p>This structure was especially useful in the early days of ARPAnet, because back then Subnet Masks weren't used yet. So this was the only way routers and computers could recognize the boundary between the Network ID and the Host ID.</p>
+        </div>
+
+        <div class="learning-content">
+            <h2>Understanding IP Address Classes</h2>
+            <p>IP addresses are divided into classes based on their first octet value. Each class has specific ranges and uses:</p>
+            
+            <h3>Class A (1-126)</h3>
+            <p>Class A addresses are designed for large networks. They use the first octet for the network portion and the remaining three octets for hosts. This allows for 16,777,214 hosts per network.</p>
+            <p>Note: The first octet cannot be 0 (reserved for default routes) or 127 (reserved for loopback). The entire 127.0.0.0/8 range (127.0.0.0 to 127.255.255.255) is reserved for loopback addresses, which are used to test network connectivity on your local machine. When you ping 127.0.0.1, you're testing if your own network stack is working properly. Any packet sent to a 127.x.x.x address never leaves your computer - it's automatically routed back to your local machine. This is why you can't use these addresses for actual network communication.</p>
+            
+            <h3>Class B (128-191)</h3>
+            <p>Class B addresses are for medium-sized networks. They use the first two octets for the network portion and the last two for hosts, allowing for 65,534 hosts per network.</p>
+            
+            <h3>Class C (192-223)</h3>
+            <p>Class C addresses are for small networks. They use the first three octets for the network portion and the last octet for hosts, allowing for 254 hosts per network.</p>
+            
+            <h3>Class D (224-239)</h3>
+            <p>Class D addresses are reserved for multicast communication, where one sender can reach multiple receivers simultaneously.</p>
+            
+            <h3>Class E (240-255)</h3>
+            <p>Class E addresses are reserved for experimental and future use.</p>
+            
+            <h3>Special Addresses</h3>
+            <p>Certain IP address ranges are reserved for special purposes:</p>
+            <ul>
+                <li>0.0.0.0/8: Default route</li>
+                <li>127.0.0.0/8: Loopback addresses (for testing local network connectivity)</li>
+                <li>169.254.0.0/16: Link-local addresses (when DHCP fails)</li>
+                <li>224.0.0.0/4: Multicast addresses</li>
+                <li>240.0.0.0/4: Reserved for future use</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📊 IP Address Classes</h2>
+            <p>In those early days of the internet, to allow flexibility for dividing IP space into many networks of various sizes, the designers split the global IP address space into groups called Classes.</p>
+            <p>Each Class defines how many octets belong to the Network ID, and how many belong to the Host ID.</p>
+            <p>There are 5 Classes total:</p>
+            <ul class="feature-list">
+                <li>The first three Classes (A, B, C) are commonly used and define where the split between Network and Host occurs.</li>
+                <li>The last two Classes (D and E) are reserved for special uses and are not used for assigning IPs to hosts.</li>
+            </ul>
+
+            <h3>How the split works:</h3>
+            <p>If we look at an IP address (e.g. W.X.Y.Z), there are 3 major options for where the Network ID ends:</p>
+
+            <div class="exercise">
+                <h3 class="class-a">📗 Class A</h3>
+                <ul class="feature-list">
+                    <li>The first octet is the Network ID</li>
+                    <li>The remaining 3 octets are the Host ID</li>
+                </ul>
+                <div class="format-block">Format: Network.Host.Host.Host</div>
+            </div>
+
+            <div class="exercise">
+                <h3 class="class-b">📘 Class B</h3>
+                <ul class="feature-list">
+                    <li>The first 2 octets are the Network ID</li>
+                    <li>The remaining 2 octets are the Host ID</li>
+                </ul>
+                <div class="format-block">Format: Network.Network.Host.Host</div>
+            </div>
+
+            <div class="exercise">
+                <h3 class="class-c">📙 Class C</h3>
+                <ul class="feature-list">
+                    <li>The first 3 octets are the Network ID</li>
+                    <li>The last octet is the Host ID</li>
+                </ul>
+                <div class="format-block">Format: Network.Network.Network.Host</div>
+            </div>
+
+            <h3>What about Class D and E?</h3>
+            <p>These aren't used for host IPs:</p>
+            <ul class="feature-list">
+                <li><strong class="class-d">Class D</strong> – Reserved for Multicast addresses</li>
+                <li><strong class="class-e">Class E</strong> – Reserved for experimental or future use</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Leading Bit Pattern</h2>
+            <p>To help routers quickly identify the Class of an IP address (and where the split is), each Class was given a unique bit prefix (called the Leading Bit Pattern). That way, routers only needed to read the first few bits to know what part is the Network ID.</p>
+
+            <table class="class-table">
+                <tr>
+                    <th>Class</th>
+                    <th>Bit Pattern</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td class="class-a">A</td>
+                    <td>0</td>
+                    <td>First bit must be 0 → Network ID is 1 octet</td>
+                </tr>
+                <tr>
+                    <td class="class-b">B</td>
+                    <td>10</td>
+                    <td>First two bits are 10 → Network ID is 2 octets</td>
+                </tr>
+                <tr>
+                    <td class="class-c">C</td>
+                    <td>110</td>
+                    <td>First three bits are 110 → Network ID is 3 octets</td>
+                </tr>
+                <tr>
+                    <td class="class-d">D</td>
+                    <td>1110</td>
+                    <td>Multicast addresses</td>
+                </tr>
+                <tr>
+                    <td class="class-e">E</td>
+                    <td>1111</td>
+                    <td>Experimental</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🧮 Number of Networks and Hosts</h2>
+            <p>Because each Class reserves a different number of bits for the Network ID and Host ID, each Class has different maximums:</p>
+
+            <div class="exercise">
+                <h3 class="class-a">📗 Class A:</h3>
+                <ul class="feature-list">
+                    <li>1st octet is the Network ID → only 7 usable bits (because the first bit is fixed to 0)</li>
+                    <li>Remaining 3 octets (24 bits) for the Host ID</li>
+                    <li>Number of Class A networks: 2⁷ = 128 (but usable: 1–126)</li>
+                    <li>Number of hosts per network: 2²⁴ – 2 = 16,777,214 (after removing network/broadcast)</li>
+                </ul>
+                <p>Example:</p>
+                <div class="format-block">
+                    First possible address: 1.0.0.0<br>
+                    Last address: 126.255.255.255
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3 class="class-b">📘 Class B:</h3>
+                <ul class="feature-list">
+                    <li>First 2 octets are the Network ID → 14 usable bits (since the first two are fixed as 10)</li>
+                    <li>Remaining 2 octets (16 bits) are for the Host ID</li>
+                    <li>Number of Class B networks: 2¹⁴ = 16,384</li>
+                    <li>Number of hosts per network: 2¹⁶ – 2 = 65,534 (subtracting network + broadcast)</li>
+                </ul>
+                <p>Example:</p>
+                <div class="format-block">
+                    First possible address: 128.0.0.0<br>
+                    Last address: 191.255.255.255
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3 class="class-c">📙 Class C:</h3>
+                <ul class="feature-list">
+                    <li>First 3 octets are the Network ID → 21 usable bits (since the first three are fixed as 110)</li>
+                    <li>Last octet (8 bits) is for the Host ID</li>
+                    <li>Number of Class C networks: 2²¹ = 2,097,152</li>
+                    <li>Number of hosts per network: 2⁸ – 2 = 254</li>
+                </ul>
+                <p>Example:</p>
+                <div class="format-block">
+                    First possible address: 192.0.0.0<br>
+                    Last address: 223.255.255.255
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>🔒 Reminder: Classes D & E</h3>
+                <p>These don't follow the same Network/Host division.</p>
+                <ul class="feature-list">
+                    <li><strong class="class-d">Class D</strong> (224.0.0.0 – 239.255.255.255): Used for Multicast</li>
+                    <li><strong class="class-e">Class E</strong> (240.0.0.0 – 255.255.255.255): Experimental and reserved for future use</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" style="text-align: center; margin-top: 40px;">
+            <h2>🎯 Ready to Practice?</h2>
+            <p>Now that you've learned about IP addresses in binary and network security, it's time to put your knowledge to the test!</p>
+            <button onclick="window.location.href='ipv4-part3-practice.html'" 
+                    style="background: linear-gradient(45deg, #00ffff, #0080ff);
+                           border: none;
+                           color: white;
+                           padding: 15px 30px;
+                           font-size: 1.2em;
+                           font-family: 'Orbitron', sans-serif;
+                           border-radius: 8px;
+                           cursor: pointer;
+                           transition: all 0.3s ease;
+                           box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+                           margin: 20px 0;">
+                🚀 Start Practice Session
+            </button>
+            <p style="font-size: 0.9em; color: #888; margin-top: 10px;">
+                Practice converting IP addresses to binary and understanding network security concepts
+            </p>
+        </div>
+    </div>
+    
+    <!-- Badge Completion Button -->
+    <div id="badge-completion-section" style="text-align: center; margin: 40px 0; padding: 30px; background: rgba(0, 255, 255, 0.1); border: 2px solid #00ffff; border-radius: 15px; display: none;">
+        <h2 style="color: #00ffff; font-family: 'Orbitron', sans-serif; margin-bottom: 20px;">🎯 Complete This Module</h2>
+        <p style="color: #fff; margin-bottom: 20px;">You've reached the end of this learning module. Click the button below to earn your badge!</p>
+        <button id="earn-badge-btn" style="
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-family: 'Orbitron', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        ">🏆 Earn Network Security Expert Badge</button>
+    </div>
+    <script src="progress-bar.js"></script>
+    
+    <!-- Badge System with Manual Trigger -->
+    <script>
+        console.log('Badge system starting...');
+        
+        // Check if already earned
+        const progress = JSON.parse(localStorage.getItem('badgeProgress') || '{}');
+        if (progress.level8 && progress.level8.completeSecurity) {
+            console.log('Badge already earned');
+        } else {
+            console.log('Setting up badge system...');
+            
+            // Show completion section when user scrolls to bottom
+            function checkScroll() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                
+                console.log('Scroll check:', scrollTop, 'of', documentHeight - windowHeight);
+                
+                // Show completion section when near bottom
+                if (scrollTop + windowHeight >= documentHeight - 200) {
+                    const completionSection = document.getElementById('badge-completion-section');
+                    if (completionSection) {
+                        completionSection.style.display = 'block';
+                        console.log('Showing completion section');
+                    }
+                }
+            }
+            
+            // Add scroll listener
+            window.addEventListener('scroll', checkScroll);
+            
+            // Check initial position
+            setTimeout(checkScroll, 1000);
+            
+            // Handle badge button click
+            document.addEventListener('DOMContentLoaded', function() {
+                const badgeBtn = document.getElementById('earn-badge-btn');
+                if (badgeBtn) {
+                    badgeBtn.addEventListener('click', function() {
+                        console.log('Badge button clicked!');
+                        awardBadge();
+                    });
+                }
+            });
+        }
+        
+        // Function to award badge
+        function awardBadge() {
+            console.log('Awarding badge...');
+            
+            // Save to localStorage
+            const progress = JSON.parse(localStorage.getItem('badgeProgress') || '{}');
+            if (!progress.level8) progress.level8 = {};
+            progress.level8.completeSecurity = true;
+            localStorage.setItem('badgeProgress', JSON.stringify(progress));
+            
+            // Show celebration
+            const celebration = document.createElement('div');
+            celebration.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            celebration.innerHTML = `
+                <div style="
+                    background: linear-gradient(45deg, #00ffff, #0080ff);
+                    padding: 40px;
+                    border-radius: 20px;
+                    text-align: center;
+                    color: white;
+                    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+                ">
+                    <img src="badge icons/8.png" alt="Badge" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; margin-bottom: 20px;">
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-size: 2em; margin-bottom: 10px;">Badge Earned!</h3>
+                    <p style="font-size: 1.2em; margin: 5px 0;">Network Security Expert</p>
+                    <p style="font-style: italic; margin: 5px 0;">Complete all security modules</p>
+                    <p style="margin-top: 20px;">Well done! You've earned a badge for completing this topic.</p>
+                </div>
+            `;
+            
+            document.body.appendChild(celebration);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                celebration.remove();
+            }, 4000);
+            
+            console.log('Badge celebration shown!');
+        }
+    </script>
+
+    <script type="module" src="js/badges.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pageId = 'ipv4-part3-reading';
+            const badgeId = 'ipv4-part3-reading-badge';
+
+            // Function to handle scroll-based badge awarding
+            function handleScrollBadge() {
+                const hasScrolledToBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50;
+
+                if (hasScrolledToBottom && !localStorage.getItem(badgeId)) {
+                    console.log('Awarding scroll badge for IPv4 Part 3');
+                    localStorage.setItem(badgeId, 'true');
+
+                    const badgeData = {
+                        id: badgeId,
+                        title: 'Binary & Security Reader',
+                        description: 'You have completed the IPv4 Part 3 reading module.',
+                        icon: 'BADGE ICONS/9.png'
+                    };
+                    
+                    // Create and show the badge notification
+                    showBadgeNotification(badgeData);
+                }
+            }
+
+            // Function to display the badge notification
+            function showBadgeNotification(badge) {
+                const notification = document.createElement('div');
+                notification.className = 'badge-celebration';
+                notification.innerHTML = `
+                    <div class="celebration-content">
+                        <div class="badge-icon">
+                            <img src="${badge.icon}" alt="Badge Icon">
+                        </div>
+                        <h3>${badge.title}</h3>
+                        <p>${badge.description}</p>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 4000);
+            }
+
+            // Listen for scroll events
+            window.addEventListener('scroll', handleScrollBadge);
+        });
+    </script>
+</body>
+</html> 

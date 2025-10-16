@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 Part 4: Subnet Mask</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #000;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            background: linear-gradient(45deg, #000000, #001a1a);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(0, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        h2 {
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 30px;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .example {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        th, td {
+            border: 1px solid #00ffff;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .highlight {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        ul li:before {
+            content: "→";
+            color: #00ffff;
+            position: absolute;
+            left: -20px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 2px solid #00ffff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .button:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+
+        /* Reading Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .reading-progress-bar {
+            height: 100%;
+            background: #00ffff;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="reading-progress">
+        <div class="reading-progress-bar" id="reading-progress-bar"></div>
+    </div>
+    <div class="container">
+        <div class="content">
+            <h1>IPv4 Part 4: Subnet Mask</h1>
+
+            <div class="section">
+                <h2>🌍 What is a Network?</h2>
+                <p>Think of a network like a city:</p>
+                <ul>
+                    <li>In the city, there are houses — each house is like a computer</li>
+                    <li>Every house has an address — in a network, this is called an IP address (for example: 192.168.1.10)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>🧩 What is a Subnet?</h2>
+                <p>Sometimes the city is too big to manage all at once, so we divide it into neighborhoods. This is what a subnet mask helps us do!</p>
+                <ul>
+                    <li>Each neighborhood (called the Network ID) can hold only a certain number of houses (computers)</li>
+                    <li>The subnet mask tells us which part of the IP address is the neighborhood (Network ID) and which part is the house number (Host ID)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>What is the Subnet Mask?</h2>
+                <ul>
+                    <li>It's like the name of the neighborhood</li>
+                    <li>It shows where the neighborhood ends and where the house numbers inside the neighborhood start</li>
+                    <li>Every house in the neighborhood has a unique number — the Host ID</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Examples of Subnet Masks</h2>
+                <div class="example">
+                    <p>Common subnet masks:</p>
+                    <ul>
+                        <li>255.255.255.0</li>
+                        <li>255.255.254.0</li>
+                        <li>255.255.128.0</li>
+                    </ul>
+                    <p>Or written another way:</p>
+                    <ul>
+                        <li>/24 is the same as 255.255.255.0</li>
+                        <li>/23 is the same as 255.255.254.0</li>
+                        <li>/17 is the same as 255.255.128.0</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Why is /24 equal to 255.255.255.0?</h2>
+                <ul>
+                    <li>The /24 means 24 bits (out of 32 total bits) are used for the neighborhood</li>
+                    <li>The remaining 8 bits are for houses</li>
+                    <li>In binary, 255.255.255.0 looks like this:</li>
+                </ul>
+                <div class="example">
+                    <code>11111111.11111111.11111111.00000000</code>
+                    <p>The 24 ones (1) represent the neighborhood.</p>
+                    <p>The 8 zeros (0) represent the houses.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Why is 255.255.128.0 equal to /17?</h2>
+                <p>Each section of an IP address (called an octet) has 8 bits:</p>
+                <ul>
+                    <li>255 = 11111111 (all 8 bits are 1)</li>
+                    <li>128 = 10000000 (only the first bit is 1)</li>
+                    <li>0 = 00000000 (all bits are 0)</li>
+                </ul>
+                <p>So, 255.255.128.0 in binary is:</p>
+                <div class="example">
+                    <code>11111111.11111111.10000000.00000000</code>
+                    <p>Count the number of 1 bits:</p>
+                    <ul>
+                        <li>First octet: 8 bits of 1</li>
+                        <li>Second octet: 8 bits of 1</li>
+                        <li>Third octet: 1 bit of 1</li>
+                        <li>Total = 8 + 8 + 1 = 17 bits → This is why it's /17</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>What does CIDR mean?</h2>
+                <p>The CIDR (Classless Inter-Domain Routing) number shows how many bits are for the neighborhood (Network ID).</p>
+                <p>The rest of the bits are for the houses (Host ID).</p>
+                <p>For example, with /17:</p>
+                <ul>
+                    <li>17 bits are for the neighborhood</li>
+                    <li>32 - 17 = 15 bits are for the houses</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>How to Calculate Where the Neighborhood Starts?</h2>
+                <p>There's a handy jump value table for each bit (CIDR number) showing how IP address blocks jump:</p>
+                <table>
+                    <tr>
+                        <th>Bit Position (CIDR)</th>
+                        <th>Jump Value</th>
+                        <th>Bit Position (CIDR)</th>
+                        <th>Jump Value</th>
+                    </tr>
+                    <tr><td>1</td><td>128</td><td>17</td><td>128</td></tr>
+                    <tr><td>2</td><td>64</td><td>18</td><td>64</td></tr>
+                    <tr><td>3</td><td>32</td><td>19</td><td>32</td></tr>
+                    <tr><td>4</td><td>16</td><td>20</td><td>16</td></tr>
+                    <tr><td>5</td><td>8</td><td>21</td><td>8</td></tr>
+                    <tr><td>6</td><td>4</td><td>22</td><td>4</td></tr>
+                    <tr><td>7</td><td>2</td><td>23</td><td>2</td></tr>
+                    <tr><td>8</td><td>1</td><td>24</td><td>1</td></tr>
+                    <tr><td>9</td><td>128</td><td>25</td><td>128</td></tr>
+                    <tr><td>10</td><td>64</td><td>26</td><td>64</td></tr>
+                    <tr><td>11</td><td>32</td><td>27</td><td>32</td></tr>
+                    <tr><td>12</td><td>16</td><td>28</td><td>16</td></tr>
+                    <tr><td>13</td><td>8</td><td>29</td><td>8</td></tr>
+                    <tr><td>14</td><td>4</td><td>30</td><td>4</td></tr>
+                    <tr><td>15</td><td>2</td><td>31</td><td>2</td></tr>
+                    <tr><td>16</td><td>1</td><td>32</td><td>1</td></tr>
+                </table>
+                <div class="example">
+                    <p><strong>How to use this table:</strong></p>
+                    <ul>
+                        <li>Each row shows two bit positions and their corresponding jump values</li>
+                        <li>The pattern repeats every 8 bits (1-8, 9-16, 17-24, 25-32)</li>
+                        <li>For example, if you have a /20 subnet, look at bit position 20 to find the jump value (16)</li>
+                        <li>This helps you quickly determine where network boundaries occur</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Practical Examples</h2>
+                
+                <div class="example">
+                    <h3>Example 1: IP Address: 192.123.154.122/17</h3>
+                    <ul>
+                        <li>/17 means the 17th bit is the first bit in the third octet</li>
+                        <li>According to the table, the 17th bit jump value is 128</li>
+                        <li>Take the third octet: 154</li>
+                        <li>Divide by 128: 154 ÷ 128 = 1.2</li>
+                        <li>Keep only the whole number: 1</li>
+                        <li>Multiply back: 1 × 128 = 128</li>
+                        <li>So, the neighborhood starts at: 192.123.128.0</li>
+                    </ul>
+                    <p>Neighborhoods (Network IDs) change every 128 in the third octet.</p>
+                </div>
+
+                <div class="example">
+                    <h3>Example 2: IP Address: 10.10.75.15/20</h3>
+                    <ul>
+                        <li>The 20th bit is the 4th bit in the third octet</li>
+                        <li>The jump value for bit 4 is 16</li>
+                        <li>Take the third octet: 75</li>
+                        <li>Divide by 16: 75 ÷ 16 = 4.68</li>
+                        <li>Keep the whole number: 4</li>
+                        <li>Multiply back: 4 × 16 = 64</li>
+                        <li>So, the neighborhood starts at: 10.10.64.0</li>
+                    </ul>
+                    <p>Neighborhoods change every 16 in the third octet.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Summary</h2>
+                <ul>
+                    <li>The Subnet Mask defines the boundary of a neighborhood in the network</li>
+                    <li>The CIDR shows how many bits are for the neighborhood and where the house numbers begin</li>
+                    <li>To find where the neighborhood starts, divide the relevant octet by the jump value, keep the whole number, then multiply back to get the neighborhood's starting address</li>
+                </ul>
+            </div>
+
+            <div class="button-container">
+                <a href="ipv4-part4-practice.html" class="button">Practice</a>
+                <a href="index.html" class="button">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Track reading progress
+        let hasReachedBottom = false;
+        const progressBar = document.getElementById('reading-progress-bar');
+        
+        function updateReadingProgress() {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.scrollY;
+            
+            // Calculate how far the user has scrolled
+            const scrollPercentage = (scrollTop / (documentHeight - windowHeight)) * 100;
+            progressBar.style.width = `${scrollPercentage}%`;
+            
+            // Check if user has reached bottom (with a small threshold)
+            if (scrollPercentage > 95 && !hasReachedBottom) {
+                hasReachedBottom = true;
+                console.log('Reading completed! Setting flag...');
+                // Store completion in sessionStorage
+                sessionStorage.setItem('subnetMaskReadingCompleted', 'true');
+                console.log('Flag set:', sessionStorage.getItem('subnetMaskReadingCompleted'));
+                
+                // Show completion message
+                const completionMessage = document.createElement('div');
+                completionMessage.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.9);
+                    border: 2px solid #00ffff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    text-align: center;
+                    z-index: 2000;
+                    animation: fadeInOut 3s ease-in-out forwards;
+                `;
+                completionMessage.innerHTML = `
+                    <img src="BADGE ICONS/11.png" alt="Reading Completion Badge" style="width: 100px; height: 100px; margin-bottom: 15px;">
+                    <h2 style="color: #00ffff; font-family: 'Orbitron', sans-serif; margin: 0 0 10px 0;">Reading Complete!</h2>
+                    <p style="color: #fff; margin: 0;">You've earned the Reading Completion Badge!</p>
+                `;
+                document.body.appendChild(completionMessage);
+                
+                // Remove the message after animation
+                setTimeout(() => {
+                    completionMessage.remove();
+                }, 3000);
+            }
+        }
+
+        // Add keyframes for the animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+                30% { transform: translate(-50%, -50%) scale(1); }
+                80% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Update progress on scroll
+        window.addEventListener('scroll', updateReadingProgress);
+        
+        // Initial progress update
+        updateReadingProgress();
+    </script>
+</body>
+</html> 

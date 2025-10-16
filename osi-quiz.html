@@ -1,0 +1,31 @@
+<script type="module">
+    import { handleQuizCompletion } from './badges.js';
+    
+    // Add this to your existing quiz completion code
+    function onQuizComplete(score) {
+        // Calculate percentage score
+        const percentageScore = (score / totalQuestions) * 100;
+        
+        // Handle badge completion
+        const badgeEarned = handleQuizCompletion('level5', percentageScore);
+        
+        // Show results
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `
+            <h2>Quiz Complete!</h2>
+            <p>Your score: ${score}/${totalQuestions} (${percentageScore.toFixed(1)}%)</p>
+            ${badgeEarned ? '<p class="badge-earned">You earned the Protocol Pioneer badge! 🎉</p>' : ''}
+        `;
+        
+        // Show results
+        resultsDiv.style.display = 'block';
+    }
+    
+    // Update your existing submit button click handler
+    document.getElementById('submit-btn').addEventListener('click', () => {
+        // Your existing quiz submission code...
+        
+        // Call onQuizComplete with the score
+        onQuizComplete(score);
+    });
+</script> 

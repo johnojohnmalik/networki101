@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4 Part 3: IP Addresses in Binary & Network Security</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .module-button {
+            padding: 25px 50px;
+            font-size: 1.3em;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            min-width: 180px;
+            width: 200px;
+            height: 80px;
+            white-space: nowrap;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            overflow: visible;
+        }
+
+        .module-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        @media screen and (max-width: 768px) {
+            .button-container {
+                gap: 15px;
+                margin-top: 30px;
+            }
+
+            .module-button {
+                padding: 20px 35px;
+                font-size: 1.1em;
+                min-width: 150px;
+                width: 170px;
+                height: 70px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 25px;
+                padding: 0 10px;
+            }
+
+            .module-button {
+                padding: 18px 25px;
+                font-size: 1em;
+                min-width: unset;
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+                min-height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>IPv4 Part 3: IP Addresses in Binary & Network Security</h1>
+        <div class="button-container">
+            <button class="module-button" onclick="goToLearn()">Learn</button>
+            <button class="module-button" onclick="goToPractice()">Practice</button>
+        </div>
+    </div>
+
+    <script>
+        function goToLearn() {
+            console.log('Learn button clicked - redirecting to ipv4-part3-module.html');
+            try {
+                window.location.replace('ipv4-part3-module.html');
+            } catch (error) {
+                console.error('Error redirecting to learn page:', error);
+                // Fallback method
+                window.location.href = 'ipv4-part3-module.html';
+            }
+        }
+        
+        function goToPractice() {
+            console.log('Practice button clicked - redirecting to ipv4-part3-practice.html');
+            try {
+                window.location.replace('ipv4-part3-practice.html');
+            } catch (error) {
+                console.error('Error redirecting to practice page:', error);
+                // Fallback method
+                window.location.href = 'ipv4-part3-practice.html';
+            }
+        }
+    </script>
+</body>
+</html> 

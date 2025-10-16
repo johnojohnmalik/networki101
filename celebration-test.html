@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celebration System Test</title>
+    <style>
+        :root {
+            --primary-color: #00ffff;
+            --accent-color: #ff00ff;
+            --text-color: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+        }
+
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .test-button {
+            padding: 15px 30px;
+            margin: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .celebration-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 60px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+            text-align: center;
+            opacity: 0;
+            z-index: 1001;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .celebration-message h2 {
+            color: var(--primary-color);
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 0 0 20px var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        .celebration-message p {
+            color: var(--accent-color);
+            font-size: 1.8em;
+            margin: 15px 0 0;
+            text-shadow: 0 0 15px var(--accent-color);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+        }
+
+        .cyber-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes fadeInOut {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8); 
+            }
+            20% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.1); 
+            }
+            80% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8); 
+            }
+        }
+
+        @keyframes particleAnimation {
+            0% { 
+                transform: translate(0, 0) rotate(0deg); 
+                opacity: 1; 
+                width: 4px;
+                height: 4px;
+            }
+            50% {
+                opacity: 1;
+                width: 6px;
+                height: 6px;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) rotate(360deg); 
+                opacity: 0; 
+                width: 2px;
+                height: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="celebration-container" id="celebrationContainer"></div>
+    
+    <div class="test-container">
+        <h1>🎉 Celebration System Test</h1>
+        <p>Click the buttons below to test different streak celebrations:</p>
+        
+        <button class="test-button" onclick="testCelebration(5)">Test Streak 5</button>
+        <button class="test-button" onclick="testCelebration(10)">Test Streak 10</button>
+        <button class="test-button" onclick="testCelebration(15)">Test Streak 15</button>
+        <button class="test-button" onclick="testCelebration(20)">Test Streak 20</button>
+        <button class="test-button" onclick="testCelebration(25)">Test Streak 25</button>
+        
+        <div style="margin-top: 40px;">
+            <h3>Features:</h3>
+            <ul style="text-align: left; display: inline-block;">
+                <li>🎆 Animated fireworks with multiple bursts</li>
+                <li>🎯 Cybersecurity-themed titles</li>
+                <li>✨ Smooth fade in/out animations</li>
+                <li>🎨 Cyberpunk color scheme</li>
+                <li>⏱️ Auto-hide after 4 seconds</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="celebration.js"></script>
+    
+    <script>
+        function testCelebration(streak) {
+            triggerCelebration(streak);
+        }
+    </script>
+</body>
+</html> 

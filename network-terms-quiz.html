@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Basic Terms Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="progress-bar.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            background: #00ffff;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .question {
+            font-size: 1.5em;
+            color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: rgba(0, 255, 255, 0.3);
+            border-color: #00ffff;
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+
+        .option.incorrect {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .final-score {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .final-score h2 {
+            color: #00ffff;
+            margin-bottom: 20px;
+        }
+
+        .final-score p {
+            color: #fff;
+            margin: 10px 0;
+        }
+
+        .streak-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            z-index: 1000;
+        }
+
+        .streak-counter span {
+            color: #ff00ff;
+            font-weight: bold;
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        @media screen and (max-width: 768px) {
+            .quiz-container {
+                padding: 15px;
+            }
+
+            .question {
+                font-size: 1.3em;
+                margin-bottom: 25px;
+            }
+
+            .streak-counter {
+                top: 15px;
+                right: 15px;
+                padding: 8px 15px;
+                font-size: 1em;
+            }
+
+            .question-counter {
+                font-size: 1em;
+            }
+
+            .navigation-buttons {
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .quiz-container {
+                padding: 10px;
+            }
+
+            .question {
+                font-size: 1.1em;
+                margin-bottom: 20px;
+            }
+
+            .options {
+                gap: 12px;
+            }
+
+            .option {
+                padding: 14px 12px;
+                font-size: 0.95rem;
+                min-height: 44px;
+            }
+
+            .streak-counter {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+
+            .question-counter {
+                font-size: 0.9em;
+                margin-bottom: 15px;
+            }
+
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                width: 100%;
+                padding: 14px 18px;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+
+            .feedback {
+                margin-top: 15px;
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .final-score {
+                padding: 25px 15px;
+            }
+
+            .final-score h2 {
+                font-size: 1.4rem;
+            }
+
+            .final-score p {
+                font-size: 0.95rem;
+            }
+
+            .final-score .nav-btn {
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="streak-counter">Current Streak: <span id="streak-count">0</span></div>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="question-counter">Question <span id="current-question">1</span> of <span id="total-questions">25</span></div>
+        <div id="question-container" class="question-container">
+            <!-- Question content will be dynamically inserted here -->
+        </div>
+        <div class="navigation-buttons">
+            <button id="prev-btn" class="nav-btn" disabled>Previous</button>
+            <button id="next-btn" class="nav-btn" disabled>Next</button>
+        </div>
+    </div>
+    <div id="celebration-overlay" style="display:none;"></div>
+
+    <script src="progress-bar.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/home-button.js"></script>
+    <script src="js/celebration.js"></script>
+
+    <script>
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let userAnswers = [];
+
+        // Questions array
+        const questions = [
+            {
+                question: "Which network topology is most commonly used in home networks?",
+                options: ["Bus", "Star", "Ring", "Mesh"],
+                correctAnswer: 1,
+                explanation: "Star topology is most common in home networks because it's easy to set up and maintain, with all devices connecting to a central hub or switch."
+            },
+            {
+                question: "What is the main advantage of a mesh topology?",
+                options: ["Low cost", "Easy to install", "High reliability", "Simple management"],
+                correctAnswer: 2,
+                explanation: "Mesh topology provides high reliability because each device can communicate with every other device through multiple paths, ensuring network connectivity even if some connections fail."
+            },
+            {
+                question: "Which topology is most suitable for a small office with 5 computers?",
+                options: ["Bus", "Star", "Ring", "Mesh"],
+                correctAnswer: 1,
+                explanation: "Star topology is ideal for small offices as it provides good performance, easy management, and scalability for a small number of devices."
+            },
+            {
+                question: "What is the main disadvantage of a bus topology?",
+                options: ["High cost", "Complex installation", "Single point of failure", "Limited scalability"],
+                correctAnswer: 2,
+                explanation: "In a bus topology, if the main cable fails, the entire network goes down, making it a single point of failure."
+            },
+            {
+                question: "What is a LAN?",
+                options: ["Local Area Network", "Large Area Network", "Long Area Network", "Linked Area Network"],
+                correctAnswer: 0,
+                explanation: "LAN (Local Area Network) is a network that connects devices within a limited area like a home, office, or building."
+            },
+            {
+                question: "What is a WAN?",
+                options: ["Wide Area Network", "Wireless Area Network", "Web Area Network", "World Area Network"],
+                correctAnswer: 0,
+                explanation: "WAN (Wide Area Network) is a network that spans a large geographical area, often connecting multiple LANs."
+            },
+            {
+                question: "What is a router?",
+                options: ["A device that connects different networks", "A device that only connects computers", "A device that only provides internet", "A device that only provides WiFi"],
+                correctAnswer: 0,
+                explanation: "A router is a networking device that forwards data packets between computer networks, creating an overlay internetwork."
+            },
+            {
+                question: "What is a switch?",
+                options: ["A device that connects devices within a network", "A device that connects different networks", "A device that provides internet", "A device that provides WiFi"],
+                correctAnswer: 0,
+                explanation: "A switch is a networking device that connects devices within a network and uses MAC addresses to forward data to the correct destination."
+            },
+            {
+                question: "What is a hub?",
+                options: ["A device that broadcasts data to all ports", "A device that routes data", "A device that provides internet", "A device that provides WiFi"],
+                correctAnswer: 0,
+                explanation: "A hub is a basic networking device that connects multiple devices and broadcasts data to all connected devices."
+            },
+            {
+                question: "What is bandwidth?",
+                options: ["The maximum data transfer rate", "The physical width of a cable", "The number of devices connected", "The distance a signal can travel"],
+                correctAnswer: 0,
+                explanation: "Bandwidth is the maximum rate of data transfer across a given path, typically measured in bits per second (bps)."
+            },
+            {
+                question: "What is latency?",
+                options: ["The time it takes for data to travel", "The amount of data transferred", "The number of devices connected", "The strength of the signal"],
+                correctAnswer: 0,
+                explanation: "Latency is the time it takes for data to travel from one point to another in a network, typically measured in milliseconds."
+            },
+            {
+                question: "What is a protocol?",
+                options: ["A set of rules for communication", "A type of cable", "A network device", "A type of software"],
+                correctAnswer: 0,
+                explanation: "A protocol is a set of rules that define how devices communicate with each other over a network."
+            },
+            {
+                question: "What is TCP/IP?",
+                options: ["A suite of communication protocols", "A type of cable", "A network device", "A type of software"],
+                correctAnswer: 0,
+                explanation: "TCP/IP (Transmission Control Protocol/Internet Protocol) is a suite of communication protocols used to interconnect network devices on the internet."
+            },
+            {
+                question: "What is a firewall?",
+                options: ["A security device that monitors network traffic", "A device that provides internet", "A device that provides WiFi", "A type of cable"],
+                correctAnswer: 0,
+                explanation: "A firewall is a security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules."
+            },
+            {
+                question: "What is a VPN?",
+                options: ["Virtual Private Network", "Virtual Public Network", "Very Private Network", "Very Public Network"],
+                correctAnswer: 0,
+                explanation: "A VPN (Virtual Private Network) creates a secure, encrypted connection over a less secure network, such as the internet."
+            },
+            {
+                question: "What is DNS?",
+                options: ["Domain Name System", "Domain Network System", "Digital Name System", "Digital Network System"],
+                correctAnswer: 0,
+                explanation: "DNS (Domain Name System) translates domain names into IP addresses, allowing users to access websites using easy-to-remember names."
+            },
+            {
+                question: "What is DHCP?",
+                options: ["Dynamic Host Configuration Protocol", "Dynamic Host Control Protocol", "Dynamic Host Connection Protocol", "Dynamic Host Communication Protocol"],
+                correctAnswer: 0,
+                explanation: "DHCP (Dynamic Host Configuration Protocol) automatically assigns IP addresses and other network configuration parameters to devices on a network."
+            },
+            {
+                question: "What is a subnet?",
+                options: ["A logical division of an IP network", "A physical division of a network", "A type of cable", "A network device"],
+                correctAnswer: 0,
+                explanation: "A subnet is a logical division of an IP network that allows for better organization and security of network resources."
+            },
+            {
+                question: "What is a gateway?",
+                options: ["A device that connects different networks", "A device that only connects computers", "A device that only provides internet", "A device that only provides WiFi"],
+                correctAnswer: 0,
+                explanation: "A gateway is a network node that connects two networks using different protocols, allowing them to communicate with each other."
+            },
+            {
+                question: "What is a proxy server?",
+                options: ["A server that acts as an intermediary", "A server that only provides internet", "A server that only provides WiFi", "A type of cable"],
+                correctAnswer: 0,
+                explanation: "A proxy server acts as an intermediary between clients and servers, providing various functions such as caching, filtering, and security."
+            },
+            {
+                question: "What is a MAC address?",
+                options: ["A unique identifier for network devices", "A type of cable", "A network protocol", "A type of software"],
+                correctAnswer: 0,
+                explanation: "A MAC (Media Access Control) address is a unique identifier assigned to network interfaces for communications on a network."
+            },
+            {
+                question: "What is an IP address?",
+                options: ["A unique identifier for devices on a network", "A type of cable", "A network protocol", "A type of software"],
+                correctAnswer: 0,
+                explanation: "An IP (Internet Protocol) address is a unique numerical label assigned to each device connected to a computer network."
+            },
+            {
+                question: "What is a port?",
+                options: ["A virtual endpoint for communication", "A physical connector", "A type of cable", "A network device"],
+                correctAnswer: 0,
+                explanation: "A port is a virtual endpoint for communication in computer networking, identified by a number and used to direct traffic to specific applications."
+            },
+            {
+                question: "What is a packet?",
+                options: ["A unit of data transmitted over a network", "A type of cable", "A network device", "A type of software"],
+                correctAnswer: 0,
+                explanation: "A packet is a small unit of data that is transmitted over a network, containing both the data and control information."
+            },
+            {
+                question: "What is a protocol stack?",
+                options: ["A set of network protocols working together", "A type of cable", "A network device", "A type of software"],
+                correctAnswer: 0,
+                explanation: "A protocol stack is a set of network protocol layers that work together to provide networking capabilities."
+            }
+        ];
+
+        // Update the total questions display
+        document.getElementById('total-questions').textContent = questions.length;
+
+        // Function to update question number display
+        function updateQuestionNumber() {
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+        }
+
+        // Function to check streak milestone
+        function checkStreakMilestone() {
+            if (streak > 0 && streak % 5 === 0) {
+                showCelebration(streak);
+            }
+        }
+
+        // Function to display current question
+        function displayQuestion() {
+            const question = questions[currentQuestionIndex];
+            const questionContainer = document.getElementById('question-container');
+            
+            // Update question number
+            updateQuestionNumber();
+
+            // Create question HTML
+            let questionHTML = `
+                <h2>${question.question}</h2>
+                <div class="options">
+            `;
+            
+            question.options.forEach((option, index) => {
+                questionHTML += `
+                    <button class="option" data-index="${index}">
+                        ${option}
+                    </button>
+                `;
+            });
+            
+            questionHTML += '</div>';
+            questionContainer.innerHTML = questionHTML;
+            
+            // Add click event listeners to options
+            document.querySelectorAll('.option').forEach(button => {
+                button.addEventListener('click', handleAnswer);
+            });
+
+            // Update navigation buttons
+            updateNavigationButtons();
+        }
+
+        // Function to handle answer selection
+        function handleAnswer(event) {
+            const selectedIndex = parseInt(event.target.dataset.index);
+            const question = questions[currentQuestionIndex];
+            
+            // Disable all options
+            document.querySelectorAll('.option').forEach(button => {
+                button.disabled = true;
+            });
+            
+            // Create feedback element
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            
+            // Check if answer is correct
+            if (selectedIndex === question.correctAnswer) {
+                event.target.classList.add('correct');
+                score++;
+                streak++;
+                // Update streak counter display
+                document.getElementById('streak-count').textContent = streak;
+                // Check for streak milestone
+                if (streak % 5 === 0) {
+                    showCelebration(streak);
+                }
+                feedback.textContent = '✅ Correct!';
+                feedback.className = 'feedback correct';
+            } else {
+                event.target.classList.add('incorrect');
+                // Show correct answer
+                document.querySelectorAll('.option')[question.correctAnswer].classList.add('correct');
+                streak = 0;
+                // Update streak counter display
+                document.getElementById('streak-count').textContent = streak;
+                feedback.textContent = `❌ Incorrect. ${question.explanation}`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            // Add feedback to question container
+            document.getElementById('question-container').appendChild(feedback);
+            
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = selectedIndex;
+            
+            // Enable next button
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        // Function to update navigation buttons
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = true;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        // Function to handle next button click
+        function handleNext() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Function to handle previous button click
+        function handlePrevious() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+                
+                // Restore previous answer if exists
+                if (userAnswers[currentQuestionIndex] !== undefined) {
+                    const previousAnswer = userAnswers[currentQuestionIndex];
+                    const options = document.querySelectorAll('.option');
+                    options[previousAnswer].classList.add(
+                        previousAnswer === questions[currentQuestionIndex].correctAnswer ? 'correct' : 'incorrect'
+                    );
+                    options.forEach(button => button.disabled = true);
+                    document.getElementById('next-btn').disabled = false;
+                }
+            }
+        }
+
+        // Function to show results
+        function showResults() {
+            const questionContainer = document.getElementById('question-container');
+            const percentage = (score / questions.length) * 100;
+            
+            questionContainer.innerHTML = `
+                <div class="final-score">
+                    <h2>🎉 Quiz Complete!</h2>
+                    <p>Your score: ${score} out of ${questions.length} (${percentage.toFixed(1)}%)</p>
+                    <p>Highest streak: ${streak}</p>
+                    <div style="margin-top: 20px;">
+                        <button class="nav-btn" onclick="location.reload()">Try Again</button>
+                        <button class="nav-btn" onclick="window.location.href='network-terms-module.html'">Return to Module</button>
+                    </div>
+                </div>
+            `;
+            
+            // Hide navigation buttons
+            document.querySelector('.navigation-buttons').style.display = 'none';
+            
+            // Dispatch quiz complete event for navigation
+            window.dispatchEvent(new CustomEvent('quizComplete'));
+        }
+
+        // Add event listeners to navigation buttons
+        document.getElementById('next-btn').addEventListener('click', handleNext);
+        document.getElementById('prev-btn').addEventListener('click', handlePrevious);
+
+        // Initialize the quiz
+        displayQuestion();
+    </script>
+</body>
+</html> 
